@@ -8,12 +8,22 @@ namespace BoardR
         static void Main(string[] args)
         {
 
-            Task task = new Task("Test the application flow", "Pesho", DateTime.Now.AddDays(1));
-            task.AdvanceStatus();
-            task.AdvanceStatus();
-            task.Assignee = "Gosho";
-            Console.WriteLine(task.ViewHistory());
 
+
+            var issue = new Issue("App flow tests?", "We need to test the App!", DateTime.Now.AddDays(1));
+            issue.AdvanceStatus();
+            issue.DueDate = issue.DueDate.AddDays(1);
+            Console.WriteLine(issue.ViewHistory());
+
+            Console.WriteLine("-------------");
+
+            var tomorrow = DateTime.Now.AddDays(1);
+            var newIssue = new Issue("App flow tests?", "We need to test the App!", tomorrow);
+            var task = new Task("Test the application flow", "Pesho", tomorrow);
+
+            Board.AddItem(newIssue);
+            Board.AddItem(task);
+            Console.WriteLine(Board.TotalItems); // 2
 
 
 
