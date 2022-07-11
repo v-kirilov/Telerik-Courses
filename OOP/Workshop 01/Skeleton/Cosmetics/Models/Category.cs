@@ -10,7 +10,7 @@ namespace Cosmetics.Models
         public const int NameMinLength = 2;
         public const int NameMaxLength = 15;
         private string name;
-        private readonly List<Product> products = new List<Product>();
+        private  List<Product> products = new List<Product>();
 
         public Category(string name)
         {
@@ -37,9 +37,10 @@ namespace Cosmetics.Models
         {
             get
             {
-                return this.products;
+               // return this.products;
                 // List encapsulation is tricky.
-
+                List<Product> copy = new List<Product>(this.products);  //-Create a new copy of the List and return it.
+                 return copy;
             }
             
         }
