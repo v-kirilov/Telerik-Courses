@@ -8,9 +8,9 @@ namespace BoardR
     internal class BoardItem
     {
         private string title;
-        private StatusOfItem status = StatusOfItem.Open;
+        protected StatusOfItem status = StatusOfItem.Open;
         private DateTime dueDate;
-        private List<EventLog> eventList = new List<EventLog>();
+        protected List<EventLog> eventList = new List<EventLog>();
 
         private string oldTitle = String.Empty;
         private DateTime oldDate;
@@ -43,6 +43,9 @@ namespace BoardR
                     this.eventList.Add(newEvent);
                     this.title = value;
                     this.oldTitle = value;
+                }else
+                {
+                    this.title = value;
                 }
             }
         }
