@@ -6,11 +6,25 @@ namespace BoardR
 {
     internal class Board
     {
-        public List<BoardItem> items; //Съсдаваме Лист от boarditems
+        private List<BoardItem> items = new List<BoardItem>(); //Create list of boardItems
 
-        public Board()
+        public List<BoardItem> Items
         {
-            this.items = new List<BoardItem>();   //Инициализираме този лист !!!
+            get
+            {
+                List<BoardItem> copyList = new List<BoardItem>(this.items);
+                return copyList;
+            }
+
+        }
+
+        public void AddItem(BoardItem item)
+        {
+            if (items.Contains(item))
+            {
+                throw new ArgumentException($"item already exists at {this.items}");
+            }
+            items.Add(item);
         }
     }
 }
