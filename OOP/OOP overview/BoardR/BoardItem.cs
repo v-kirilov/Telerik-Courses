@@ -12,8 +12,7 @@ namespace BoardR
         private DateTime dueDate;
         protected List<EventLog> eventList = new List<EventLog>();
 
-        private string oldTitle = String.Empty;
-        private DateTime oldDate;
+
 
 
         public List<EventLog> EventList
@@ -37,13 +36,13 @@ namespace BoardR
                 {
                     throw new ArgumentException("Lenght cannot be les than 5 or more than 30");
                 }
-                if (oldTitle != String.Empty)
+                if (this.title != String.Empty)
                 {
-                    EventLog newEvent = new EventLog($"Title changed from '{this.oldTitle}' to '{value}'");
+                    EventLog newEvent = new EventLog($"Title changed from '{this.title}' to '{value}'");
                     this.eventList.Add(newEvent);
                     this.title = value;
-                    this.oldTitle = value;
-                } else
+                }
+                else
                 {
                     this.title = value;
                 }
@@ -64,11 +63,10 @@ namespace BoardR
                 }
                 if (this.dueDate != value && this.dueDate != DateTime.MinValue)
                 {
-                    EventLog newDateEvent = new EventLog($"DueDate changed from '{this.oldDate:dd-MM-yyyy}' to '{value:dd-MM-yyyy}'");
+                    EventLog newDateEvent = new EventLog($"DueDate changed from '{this.DueDate:dd-MM-yyyy}' to '{value:dd-MM-yyyy}'");
                     this.eventList.Add(newDateEvent);
                 }
                 this.dueDate = value;
-                this.oldDate = value;
 
             }
         }
@@ -86,7 +84,6 @@ namespace BoardR
         {
 
             this.Title = title;
-            this.oldTitle = title;
             this.DueDate = dueDate;
 
             EventLog newTitleEvent = new EventLog($"Item created: '{title}', [{this.status} | {this.dueDate:dd-MM-yyyy}]");
@@ -94,11 +91,11 @@ namespace BoardR
         }
 
         public abstract void AdvanceStatus();
-       
+
 
         public abstract void RevertStatus();
-       
-        
+
+
         public string ViewInfo()
         {
             return $"'{this.Title}', [{this.Status}|{this.DueDate:dd/MM/yyyy}]";

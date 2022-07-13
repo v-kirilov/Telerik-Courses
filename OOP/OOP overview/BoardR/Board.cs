@@ -29,7 +29,7 @@ namespace BoardR
         public static void LogHistory()
         {
 
-            items.OrderBy(p => p.DueDate);
+            //items.OrderBy(p => p.DueDate);
 
             foreach (var item in items)
             {
