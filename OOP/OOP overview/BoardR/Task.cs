@@ -53,5 +53,34 @@ namespace BoardR
             this.eventList.Add(createTaskEvent);
 
         }
+
+        public override void AdvanceStatus()
+        {
+            if (this.status == StatusOfItem.Verified)
+            {
+                EventLog canNotAdvance = new EventLog($"Task status already {this.status}");
+                this.eventList.Add(canNotAdvance);
+            }
+            else
+            {
+                EventLog canAdvance = new EventLog($"Task changed from {this.status} to {++this.status}");
+                this.eventList.Add(canAdvance);
+                //this.status++;
+            }
+        }
+
+        public override void RevertStatus()
+        {
+            if (this.status == StatusOfItem.Todo)
+            {
+                EventLog canNotRevert = new EventLog($"Task status already {this.status}");
+                this.eventList.Add(canNotRevert);
+            }
+            else
+            {
+                EventLog canRevert = new EventLog($"Task changed from {this.status} to {--this.status}");
+                this.eventList.Add(canRevert);
+            }
+        }
     }
 }

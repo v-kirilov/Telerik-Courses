@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace BoardR
 {
-    internal class BoardItem
+    internal abstract class BoardItem
     {
         private string title;
         protected StatusOfItem status = StatusOfItem.Open;
@@ -43,7 +43,7 @@ namespace BoardR
                     this.eventList.Add(newEvent);
                     this.title = value;
                     this.oldTitle = value;
-                }else
+                } else
                 {
                     this.title = value;
                 }
@@ -93,37 +93,12 @@ namespace BoardR
             this.eventList.Add(newTitleEvent);
         }
 
-        public void AdvanceStatus()
-        {
-            if (this.Status == StatusOfItem.Verified)
-            {
-                EventLog notAdvancedEvent = new EventLog($"Can't advance, already at Verified");
-                this.eventList.Add(notAdvancedEvent);
-                return;
-            }
-            this.status++;
-            StatusOfItem oldStatus = this.Status;
-            EventLog advanceEvent = new EventLog($"Status changed from {--oldStatus} to {this.status}");
-            this.eventList.Add(advanceEvent);
+        public abstract void AdvanceStatus();
+       
 
-        }
-        public void RevertStatus()
-        {
-            if (this.Status == StatusOfItem.Open)
-            {
-                EventLog notRevertedEvent = new EventLog($"Can't revert, already at Open");
-                this.eventList.Add(notRevertedEvent);
-
-                return;
-            }
-            this.status--;
-            StatusOfItem oldStatus = this.Status;
-            EventLog revertEvent = new EventLog($"Status changed from {++oldStatus} to {this.status}");
-            this.eventList.Add(revertEvent);
-
-
-        }
-
+        public abstract void RevertStatus();
+       
+        
         public string ViewInfo()
         {
             return $"'{this.Title}', [{this.Status}|{this.DueDate:dd/MM/yyyy}]";

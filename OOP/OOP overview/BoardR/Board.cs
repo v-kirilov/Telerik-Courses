@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+
 
 namespace BoardR
 {
@@ -20,6 +22,18 @@ namespace BoardR
             get
             {
                 return items.Count;
+            }
+            
+        }
+
+        public static void LogHistory()
+        {
+
+            items.OrderBy(p => p.DueDate);
+
+            foreach (var item in items)
+            {
+                Console.Write(item.ViewHistory());
             }
             
         }
