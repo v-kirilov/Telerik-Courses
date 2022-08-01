@@ -28,8 +28,8 @@ namespace Task_Management.Core
             {
                 case "createteam":
                     return new CreateTeamCommand(commandParameters, this.repository);
-                 
-
+                case "showallpeople":
+                    return new ShowAllPeople(this.repository);
                 default:
                     throw new InvalidUserInputException($"Command with name: { commandName } doesn't exist!");
             }

@@ -14,6 +14,7 @@ namespace Task_Management.Core
         private int currentId;
 
         private readonly List<ITeam> teams = new List<ITeam>();
+        private readonly List<IMember> members = new List<IMember>();
 
         public Repository()
         {
@@ -23,13 +24,19 @@ namespace Task_Management.Core
         {
             get
             {
-                return new List<ITeam>(teams);
+                return new List<ITeam>(this.teams);
             }
         }
-
+        public List<IMember> Members
+        {
+            get
+            {
+                return new List<IMember>(this.members);
+            }
+        }
         public ITeam CreateTeam(string name)
         {
-            if (this.teams.Any(x=>x.Name == name)==true) //==true is not necessary but added for readability
+            if (this.teams.Any(x => x.Name == name) == true) //==true is not necessary but added for readability
             {
                 throw new InvalidUserInputException($"Team with name:{name} already exists! Please choose a different name.");
             }
@@ -37,5 +44,8 @@ namespace Task_Management.Core
             this.teams.Add(team);
             return team;
         }
+
+
+
     }
 }

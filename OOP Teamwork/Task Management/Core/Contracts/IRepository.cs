@@ -8,6 +8,7 @@ namespace Task_Management.Core.Contracts
     public interface IRepository
     {
         List<ITeam> Teams { get; }
+        List<IMember> Members { get; }
         
 
         public ITeam CreateTeam(string name);

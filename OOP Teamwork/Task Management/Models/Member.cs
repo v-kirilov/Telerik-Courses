@@ -42,6 +42,26 @@ namespace Task_Management.Models
             }
         }
 
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
 
+            sb.AppendLine($"{this.Name}");
+
+            return sb.ToString();
+        }
+
+        public string ViewActivity()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Curent member: {this.Name}");
+            foreach (var ev  in eventLogs)
+            {
+                sb.AppendLine(ev.ViewInfo());
+            }
+
+            return sb.ToString();
+        }
     }
 }
+
