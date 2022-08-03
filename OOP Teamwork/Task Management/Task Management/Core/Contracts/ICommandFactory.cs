@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Input;
+﻿using Task_Management.Commands.Contracts;
+
 
 namespace Task_Management.Core.Contracts
 {

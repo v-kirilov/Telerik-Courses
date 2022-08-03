@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Task_Management.Models.Enums.Story
 {
-    internal enum Priority
+    public enum Priority
     {
         High,
         Medium,

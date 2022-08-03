@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Task_Management.Commands.Contracts;
 using Task_Management.Core.Contracts;
 
 namespace Task_Management.Core
@@ -34,6 +35,18 @@ namespace Task_Management.Core
                     {
                         break;
                     }
+                    ICommand command = this.commandFactory.Create(inputLine);
+                    string result = command.Execute();
+
+                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    Console.WriteLine();
+                    Console.WriteLine(new String('-', result.Length));
+                    Console.WriteLine(result.Trim());
+                    Console.WriteLine(new String('-', result.Length));
+                    Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Gray;
+
+
                 }
                 catch (Exception ex)
                 {

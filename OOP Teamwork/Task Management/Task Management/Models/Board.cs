@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Task_Management.Exceptions;
 using Task_Management.Models.Contracts;
 
 namespace Task_Management.Models
@@ -25,6 +26,16 @@ namespace Task_Management.Models
 
             EventLog boardCreate = new EventLog($"A new board with namd:{this.Name} has been created!");
             this.eventLogs.Add(boardCreate);
+        }
+
+        public void AddTask(ITask task)
+        {
+            if (this.Tasks.Contains(task))
+            {
+                throw new InvalidUserInputException($"Task already in board: {this.Name} tasks");
+            }
+            this.tasks.Add(task);
+            this.eventLogs.Add(new EventLog($"Task with ID: {task.Id} and title: {task.Title} was added to board: {this.Name}"));
         }
 
         public IList<ITask> Tasks

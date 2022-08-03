@@ -6,6 +6,8 @@ using Task_Management.Core.Contracts;
 using Task_Management.Exceptions;
 using Task_Management.Models;
 using Task_Management.Models.Contracts;
+using Task_Management.Models.Enums.Bug;
+using Task_Management.Models.Enums.Story;
 
 namespace Task_Management.Core
 {
@@ -14,6 +16,11 @@ namespace Task_Management.Core
         private int currentId;
 
         private readonly List<ITeam> teams = new List<ITeam>();
+        private readonly List<IMember> members = new List<IMember>();
+
+        private readonly IList<IBug> bugs = new List<IBug>();
+        private readonly IList<IStory> stories = new List<IStory>();
+        private readonly IList<IFeedback> feedbacks = new List<IFeedback>();
 
         public Repository()
         {
@@ -23,19 +30,109 @@ namespace Task_Management.Core
         {
             get
             {
-                return new List<ITeam>(teams);
+                return new List<ITeam>(this.teams);
+            }
+        }
+        public List<IMember> Members
+        {
+            get
+            {
+                return new List<IMember>(this.members);
+            }
+        }
+
+        public IList<IBug> Bugs
+        {
+            get
+            {
+                return new List<IBug>(this.bugs);
+            }
+        }
+
+        public IList<IStory> Stories
+        {
+            get
+            {
+                return new List<IStory>(this.stories);
+            }
+        }
+
+        public IList<IFeedback> Feedbacks
+        {
+            get
+            {
+                return new List<IFeedback>(this.feedbacks);
             }
         }
 
         public ITeam CreateTeam(string name)
         {
-            if (this.teams.Any(x=>x.Name == name)==true) //==true is not necessary but added for readability
+            if (this.teams.Any(x => x.Name == name) == true) //==true is not necessary but added for readability
             {
                 throw new InvalidUserInputException($"Team with name:{name} already exists! Please choose a different name.");
             }
             var team = new Team(name);
             this.teams.Add(team);
             return team;
+
+        }
+        public IMember CreateMember(string name)
+        {
+            if (this.members.Any(x => x.Name == name) == true) //==true is not necessary but added for readability
+            {
+                throw new InvalidUserInputException($"Member with name:[{name}] already exists! Please choose a different name.");
+            }
+            var member = new Member(name);
+            this.members.Add(member);
+            return member;
+        }
+
+        public IBug CreateBug(string title, string description, string steps, Models.Enums.Bug.Priority priority, Severity severity, IMember assignee)
+        {
+            IBug bug = new Bug(this.currentId + 1, title, description, steps, priority, severity, assignee);
+            this.bugs.Add(bug);
+            
+            this.currentId++;
+            return bug;
+        }
+
+        public IStory CreateStory(string title, string description, Models.Enums.Story.Priority priority, Size size, IMember assignee)
+        {
+            IStory story = new Story(this.currentId + 1, title, description, priority, size, assignee);
+            this.stories.Add(story);
+
+            this.currentId++;
+            return story;
+        }
+
+        public IFeedback CreateFeedback(string title, string description, int rating)
+        {
+            IFeedback feedback = new Feedback(this.currentId + 1, title, description, rating);
+            this.feedbacks.Add(feedback);
+
+            this.currentId++;
+            return feedback;
+        }
+
+        public IMember FindMemberByName(string name)
+        {
+            if (this.members.Any(x => x.Name == name))
+            {
+                return this.members.First(m => m.Name == name);
+            }
+
+            throw new EntityNotFoundException($"There is no member with name: {name}");
+        }
+
+        public IBoard FindBoardByName(string name)
+        {
+            if (this.teams.Any(x => x.Boards.Any(x => x.Name == name)))
+            {
+                ITeam teamWithTheBoardInit = this.teams.First(x => x.Boards.Any(x => x.Name == name));
+                return teamWithTheBoardInit.Boards.First(x => x.Name == name);
+            }
+
+            throw new EntityNotFoundException($"There is no board with name: {name}");
         }
     }
 }

@@ -45,6 +45,33 @@ namespace Task_Management.Models
             }
         }
 
+        public void AddBoard(IBoard board)
+        {
+            this.boards.Add(board);
+        }
+        public void AddBoard(string boardName)
+        {
+            var board = new Board(boardName);
+            this.boards.Add(board);
+        }
 
+        public void AddMember(IMember member)
+        {
+            this.members.Add(member);
+        }
+        public void AddMember(string memberName)
+        {
+            var member = new Member(memberName);
+            this.members.Add(member);
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine($"{this.Name}");
+
+            return sb.ToString();
+        }
     }
 }

@@ -5,13 +5,15 @@ using System.Text;
 using Task_Management.Commands.Contracts;
 using Task_Management.Core.Contracts;
 using Task_Management.Exceptions;
+using Task_Management.Models.Enums.Bug;
+using Task_Management.Models.Enums.Story;
 
 namespace Task_Management.Commands
 {
     public abstract class BaseCommand : ICommand
     {
 
-        public BaseCommand(IRepository repository, IList<string> commandParameters)
+        public BaseCommand(IList<string> commandParameters,IRepository repository)
         {
             this.Repository = repository;
             this.CommandParameters = commandParameters;
@@ -26,7 +28,7 @@ namespace Task_Management.Commands
         //    return this.ExecuteCommand();
         //}
 
-        protected abstract string Execute();
+        public abstract string Execute();
 
 
         protected int ParseIntParameter(string value, string parameterName)
@@ -54,6 +56,42 @@ namespace Task_Management.Commands
                 return result;
             }
             throw new InvalidUserInputException($"Invalid value for {parameterName}. Should be either true or false.");
+        }
+
+        protected Models.Enums.Bug.Priority ParseBugPriorityParameter(string value, string parameterName)
+        {
+            if (Enum.TryParse(value, true, out Models.Enums.Bug.Priority result))
+            {
+                return result;
+            }
+            throw new InvalidUserInputException($"Invalid value for {parameterName}. Should be either High, Medium or Low.");
+        }
+
+        protected Models.Enums.Story.Priority ParseStoryPriorityParameter(string value, string parameterName)
+        {
+            if (Enum.TryParse(value, true, out Models.Enums.Story.Priority result))
+            {
+                return result;
+            }
+            throw new InvalidUserInputException($"Invalid value for {parameterName}. Should be either High, Medium or Low.");
+        }
+
+        protected Severity ParseSeverityParameter(string value, string parameterName)
+        {
+            if (Enum.TryParse(value, true, out Severity result))
+            {
+                return result;
+            }
+            throw new InvalidUserInputException($"Invalid value for {parameterName}. Should be either Critical, Major or Minor.");
+        }
+
+        protected Size ParseSizeParameter(string value, string parameterName)
+        {
+            if (Enum.TryParse(value, true, out Size result))
+            {
+                return result;
+            }
+            throw new InvalidUserInputException($"Invalid value for {parameterName}. Should be either Large, Medium or Small.");
         }
     }
 }

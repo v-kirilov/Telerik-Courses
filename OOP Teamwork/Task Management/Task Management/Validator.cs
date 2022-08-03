@@ -14,6 +14,7 @@ namespace Task_Management
                 throw new InvalidUserInputException(message);
             }
         }
+
         public static void ValidateDecimalRange(decimal value, decimal min, decimal max, string message)
         {
             if (value < min || value > max)
@@ -22,8 +23,13 @@ namespace Task_Management
             }
         }
 
-
-
+        public static void ValidateStringIsNullOrEmpty(string value, string message)
+        {
+            if (string.IsNullOrEmpty(value))
+            {
+                throw new InvalidUserInputException(message);
+            }
+        }
 
 
 
