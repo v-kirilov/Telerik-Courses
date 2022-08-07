@@ -24,7 +24,7 @@ namespace Task_Management.Commands
             //  [0] - name of team , must be unique
             string teamName = this.CommandParameters[0];
             var team = this.Repository.CreateTeam(teamName);
-            return $"Team with name: {teamName} was created!";
+            return $"Team with name: [{teamName}] was created!";
         }
     }
 }

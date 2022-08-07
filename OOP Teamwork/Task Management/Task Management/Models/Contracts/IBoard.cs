@@ -10,5 +10,8 @@ namespace Task_Management.Models.Contracts
         IList<IEventLog> EventLogs { get; }
 
         void AddTask(ITask task);
+
+        string ViewActivity();
+
     }
 }

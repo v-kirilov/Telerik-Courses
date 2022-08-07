@@ -8,6 +8,7 @@ namespace Task_Management.Core
 {
     public class Engine :IEngine
     {
+        private const int separatorMaxLength = 80;
         private const string TerminationCommand = "exit";
         private const string EmptyCommandError = "Command cannot be empty. Please enter a valid command!";
 
@@ -39,10 +40,19 @@ namespace Task_Management.Core
                     string result = command.Execute();
 
                     Console.ForegroundColor = ConsoleColor.DarkGreen;
+
+                    var separator = string.Empty;
+                    if (result.Length>separatorMaxLength)
+                    {
+                        separator = new string('-', separatorMaxLength);
+                    }else
+                    {
+                        separator = new string('-', result.Length);
+                    }
                     Console.WriteLine();
-                    Console.WriteLine(new String('-', result.Length));
+                    Console.WriteLine(separator);
                     Console.WriteLine(result.Trim());
-                    Console.WriteLine(new String('-', result.Length));
+                    Console.WriteLine(separator);
                     Console.WriteLine();
                     Console.ForegroundColor = ConsoleColor.Gray;
 

@@ -114,6 +114,16 @@ namespace Task_Management.Core
             return feedback;
         }
 
+        public ITeam FindTeamByName(string teamName)
+        {
+            if (this.teams.Any(x => x.Name == teamName))
+            {
+                return this.teams.First(team => team.Name == teamName);
+            }
+
+            throw new EntityNotFoundException($"There is no member with name: {teamName}");
+        }
+
         public IMember FindMemberByName(string name)
         {
             if (this.members.Any(x => x.Name == name))
@@ -133,6 +143,56 @@ namespace Task_Management.Core
             }
 
             throw new EntityNotFoundException($"There is no board with name: {name}");
+        }
+
+        public IBug FindBugById(int bugId)
+        {
+            if (this.bugs.Any(x => x.Id == bugId))
+            {
+                return this.bugs.First(b => b.Id == bugId);
+            }
+            
+            throw new EntityNotFoundException($"There is no bug with ID: {bugId}");
+        }
+
+        public IStory FindStoryById(int storyId)
+        {
+            if (this.stories.Any(x => x.Id == storyId))
+            {
+                return this.stories.First(s => s.Id == storyId);
+            }
+
+            throw new EntityNotFoundException($"There is no story with ID: {storyId}");
+        }
+
+        public IFeedback FindFeedbackById(int feedbackId)
+        {
+            if (this.feedbacks.Any(x => x.Id == feedbackId))
+            {
+                return this.feedbacks.First(f => f.Id == feedbackId);
+            }
+
+            throw new EntityNotFoundException($"There is no feedback with ID: {feedbackId}");
+        }
+
+        public ITask FindTaskById(int taskId)
+        {
+            if (this.bugs.Any(x => x.Id == taskId))
+            {
+                return this.bugs.First(b => b.Id == taskId);
+            }
+            else if (this.stories.Any(x => x.Id == taskId))
+            {
+                return this.stories.First(s => s.Id == taskId);
+            }
+            else if (this.feedbacks.Any(x => x.Id == taskId))
+            {
+                return this.feedbacks.First(f => f.Id == taskId);
+            }
+            else
+            {
+                throw new EntityNotFoundException($"There is no task with ID: {taskId}");
+            }
         }
     }
 }

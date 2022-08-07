@@ -9,12 +9,12 @@ namespace Task_Management.Models.Contracts
     {
         string Steps { get; }
 
-        Priority Priority { get; }
+        Priority Priority { get; set; }
         
-        Severity Severity { get; }
+        Severity Severity { get; set; }
 
-        Status Status { get; }
+        Status Status { get; set; }
 
-        IMember Assignee { get; }
+        IMember Assignee { get; set; }
     }
 }

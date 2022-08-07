@@ -22,11 +22,14 @@ namespace Task_Management.Core.Contracts
         public IBug CreateBug(string title, string description, string steps, Models.Enums.Bug.Priority priority, Severity severity, IMember assignee);
         public IStory CreateStory(string title, string description, Models.Enums.Story.Priority priority, Size size, IMember assignee);
         public IFeedback CreateFeedback(string title, string description, int rating);
-
+        public IBug FindBugById(int bugId);
+        public IStory FindStoryById(int storyId);
+        public IFeedback FindFeedbackById(int feedbackId);
+        public ITask FindTaskById(int taskId);
         public IMember FindMemberByName(string name);
         public IBoard FindBoardByName(string name);
+        public ITeam FindTeamByName(string teamName);
 
-       //TO DO
-       //Do we need Tasks in here?
+       
     }
 }

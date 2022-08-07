@@ -7,6 +7,7 @@ using Task_Management.Core.Contracts;
 using Task_Management.Exceptions;
 using Task_Management.Models.Enums.Bug;
 using Task_Management.Models.Enums.Story;
+using Task_Management.Models.Enums.Feedback;
 
 namespace Task_Management.Commands
 {
@@ -92,6 +93,33 @@ namespace Task_Management.Commands
                 return result;
             }
             throw new InvalidUserInputException($"Invalid value for {parameterName}. Should be either Large, Medium or Small.");
+        }
+
+        protected Models.Enums.Bug.Status ParseBugStatusParameter(string value, string parameterName)
+        {
+            if (Enum.TryParse(value, true, out Models.Enums.Bug.Status result))
+            {
+                return result;
+            }
+            throw new InvalidUserInputException($"Invalid value for {parameterName}. Should be either Active or Fixed.");
+        }
+
+        protected Models.Enums.Story.Status ParseStoryStatusParameter(string value, string parameterName)
+        {
+            if (Enum.TryParse(value, true, out Models.Enums.Story.Status result))
+            {
+                return result;
+            }
+            throw new InvalidUserInputException($"Invalid value for {parameterName}. Should be either Not Done, InProgress or Done.");
+        }
+
+        protected Models.Enums.Feedback.Status ParseFeedbackStatusParameter(string value, string parameterName)
+        {
+            if (Enum.TryParse(value, true, out Models.Enums.Feedback.Status result))
+            {
+                return result;
+            }
+            throw new InvalidUserInputException($"Invalid value for {parameterName}. Should be either New, Unscheduled, Scheduled, or Done.");
         }
     }
 }

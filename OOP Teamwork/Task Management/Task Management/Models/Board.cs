@@ -53,5 +53,36 @@ namespace Task_Management.Models
                 return new List<IEventLog>(eventLogs);
             }
         }
+
+        public string ViewActivity()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"Curent member: {this.Name}");
+            foreach (var ev in eventLogs)
+            {
+                sb.AppendLine(ev.ViewInfo());
+            }
+
+            return sb.ToString();
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            string nameRow = $"║ Board name:[{this.Name}] ║";
+            string topRow = "╔";
+            topRow += new string('═', nameRow.Length - 2);
+            topRow += '╗';
+
+            string botRow = "╚";
+            botRow += new string('═', nameRow.Length - 2);
+            botRow += '╝';
+
+            sb.AppendLine(topRow);
+            sb.AppendLine(nameRow);
+            sb.AppendLine(botRow);
+
+            return sb.ToString();
+        }
     }
 }

@@ -66,17 +66,28 @@ namespace Task_Management.Models
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
+            string nameRow = $"║ Member name:[{this.Name}] ║";
+            string topRow = "╔";
+            topRow += new string('═', nameRow.Length-2);
+            topRow += '╗';
 
-            sb.AppendLine($"{this.Name}");
+            string botRow = "╚";
+            botRow += new string('═', nameRow.Length - 2);
+            botRow += '╝';
+
+            sb.AppendLine(topRow);
+            sb.AppendLine(nameRow);
+            sb.AppendLine(botRow);
 
             return sb.ToString();
         }
+        
 
         public string ViewActivity()
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine($"Curent member: {this.Name}");
-            foreach (var ev  in eventLogs)
+            foreach (var ev in eventLogs)
             {
                 sb.AppendLine(ev.ViewInfo());
             }

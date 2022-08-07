@@ -4,6 +4,7 @@ using System.Text;
 using Task_Management.Core.Contracts;
 using Task_Management.Core;
 using Task_Management.Exceptions;
+using System.Linq;
 
 namespace Task_Management.Commands
 {
@@ -28,12 +29,10 @@ namespace Task_Management.Commands
 
                 // Parameters:
                 //  [0] - name of member which history we would like to view.
+                var name = CommandParameters[0];
+                var member = this.Repository.FindMemberByName(name);
 
-                foreach (var member in this.Repository.Members)
-                {
-                    sb.Append(member.ViewActivity());
-                    sb.AppendLine("####################");
-                }
+                sb.Append(member.ViewActivity());
 
                 return sb.ToString();
             }

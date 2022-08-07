@@ -95,11 +95,19 @@ namespace Task_Management.Models
             {
                 if (value != this.Assignee)
                 {
+                    if (value == null)
+                    {
+                        this.AddEventLog($"Story with ID: {this.Id} - was unnassigned.");
+                    }
                     this.AddEventLog($"Story with ID: {this.Id} - assignee changed from: {this.Assignee} to: {value}.");
                     this.assignee = value;
                 }
                 else
                 {
+                    if (value == null)
+                    {
+                        this.AddEventLog($"Story with ID: {this.Id} - is already unnassigned.");
+                    }
                     this.AddEventLog($"Story with ID: {this.Id} - assignee is already: {this.Assignee}.");
                 }
             }

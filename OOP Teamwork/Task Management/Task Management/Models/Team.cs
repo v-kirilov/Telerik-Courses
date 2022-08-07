@@ -69,7 +69,18 @@ namespace Task_Management.Models
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendLine($"{this.Name}");
+            string nameRow = $"║ Team name:[{this.Name}] ║";
+            string topRow = "╔";
+            topRow += new string('═', nameRow.Length - 2);
+            topRow += '╗';
+
+            string botRow = "╚";
+            botRow += new string('═', nameRow.Length - 2);
+            botRow += '╝';
+
+            sb.AppendLine(topRow);
+            sb.AppendLine(nameRow);
+            sb.AppendLine(botRow);
 
             return sb.ToString();
         }

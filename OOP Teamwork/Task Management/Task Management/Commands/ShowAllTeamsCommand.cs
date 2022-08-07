@@ -23,7 +23,6 @@ namespace Task_Management.Commands
                 foreach (var team in this.Repository.Teams)
                 {
                     sb.Append(team.ToString());
-                    sb.AppendLine("####################");
                 }
 
                 return sb.ToString();

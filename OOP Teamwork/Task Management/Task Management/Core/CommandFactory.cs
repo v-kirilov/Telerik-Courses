@@ -18,7 +18,7 @@ namespace Task_Management.Core
 
         public ICommand Create(string commandLine)
         {
-            string[] arguments = commandLine.Split(" ", StringSplitOptions.RemoveEmptyEntries);
+            string[] arguments = commandLine.Split("/", StringSplitOptions.RemoveEmptyEntries);
 
             string commandName = this.ExtractCommandName(arguments);
             List<string> commandParameters = this.ExtractCommandParameters(arguments);
@@ -32,7 +32,7 @@ namespace Task_Management.Core
                     return new CreateMemberCommand(commandParameters, this.repository);
                 case "showallpeople":
                     return new ShowAllPeopleCommand(this.repository);
-                case "showactivity":
+                case "showmemberactivity":
                     return new ShowMembersActivityCommand(commandParameters,this.repository);
                 case "showallteams":
                     return new ShowAllTeams(this.repository);
@@ -46,8 +46,34 @@ namespace Task_Management.Core
                     return new CreateFeedbackCommand(commandParameters, this.repository);
                 case "addmembertoteam":
                     return new AddMemberToTeamCommand(commandParameters, this.repository);
+                case "showteammembers":
+                    return new ShowAllTeamMembersCommand(commandParameters, this.repository);
                 case "showteamsactivity":
                     return new ShowTeamsActivityCommand(commandParameters, this.repository);
+                case "showboardactivity":
+                    return new ShowBoardsActivityCommand(commandParameters, this.repository);
+                case "showallteamboards":
+                    return new ShowAllTeamBoardsCommand(commandParameters, this.repository);
+                case "changebug":
+                    return new ChangeBugCommand(commandParameters, this.repository);
+                case "changestory":
+                    return new ChangeStoryCommand(commandParameters, this.repository);
+                case "changefeedback":
+                    return new ChangeFeedbackCommand(commandParameters, this.repository);
+                case "assigntask":
+                    return new AssignTaskCommand(commandParameters, this.repository);
+                case "unassigntask":
+                    return new UnassignTaskCommand(commandParameters, this.repository);
+                case "addcomment":
+                    return new AddCommentCommand(commandParameters, this.repository);
+                case "listalltasks":
+                    return new ListAllTasksCommand(commandParameters, this.repository);
+                case "listtaskswithassignee":
+                    return new ListTasksWithAssigneeCommand(commandParameters, this.repository);
+                case "list":
+                    return new ListCommand(commandParameters, this.repository);
+                case "help":
+                    return new HelpCommand(commandParameters,this.repository);
                 default:
                     throw new InvalidUserInputException($"Command with name: { commandName } doesn't exist!");
             }
