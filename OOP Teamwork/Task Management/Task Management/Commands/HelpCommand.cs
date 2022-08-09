@@ -6,7 +6,7 @@ using Task_Management.Exceptions;
 
 namespace Task_Management.Commands
 {
-    internal class HelpCommand : BaseCommand
+    public class HelpCommand : BaseCommand
     {
         public HelpCommand(IList<string> commandParameters, IRepository repository)
             : base(null, repository)

@@ -7,7 +7,7 @@ using Task_Management.Models.Contracts;
 
 namespace Task_Management.Commands
 {
-    internal class ShowBoardsActivityCommand : BaseCommand
+    public class ShowBoardsActivityCommand : BaseCommand
     {
 
         public ShowBoardsActivityCommand(IList<string> commandParameters, IRepository repository)

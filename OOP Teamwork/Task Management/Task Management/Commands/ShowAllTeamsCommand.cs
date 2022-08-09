@@ -6,7 +6,7 @@ using Task_Management.Core;
 
 namespace Task_Management.Commands
 {
-    internal class ShowAllTeams : BaseCommand
+    public class ShowAllTeams : BaseCommand
     {
         public ShowAllTeams(IRepository repository)
             : base(null, repository)

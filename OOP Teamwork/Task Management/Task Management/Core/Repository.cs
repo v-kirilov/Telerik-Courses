@@ -121,7 +121,7 @@ namespace Task_Management.Core
                 return this.teams.First(team => team.Name == teamName);
             }
 
-            throw new EntityNotFoundException($"There is no member with name: {teamName}");
+            throw new EntityNotFoundException($"There is no team with name: {teamName}");
         }
 
         public IMember FindMemberByName(string name)

@@ -6,7 +6,7 @@ using Task_Management.Core;
 
 namespace Task_Management.Commands
 {
-    internal class ShowAllPeopleCommand : BaseCommand
+    public class ShowAllPeopleCommand : BaseCommand
     {
         public ShowAllPeopleCommand(IRepository repository)
             : base(null, repository)

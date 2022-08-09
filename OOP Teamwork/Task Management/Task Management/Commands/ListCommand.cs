@@ -36,11 +36,15 @@ namespace Task_Management.Commands
             string filter = this.CommandParameters[1];
             string filter2 = string.Empty;
             string sortby = string.Empty;
-            if (this.CommandParameters[2].ToLower() == "and")
+
+            if (this.CommandParameters.Count > 2)
             {
-                filter2 = this.CommandParameters[3];
-                sortby = this.CommandParameters[4];
-            }
+                if (this.CommandParameters[2].ToLower() == "and")
+                {
+                    filter2 = this.CommandParameters[3];
+                    sortby = this.CommandParameters[4];
+                }
+            }            
             else
             {
                 sortby = this.CommandParameters[2];

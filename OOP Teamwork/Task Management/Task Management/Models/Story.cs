@@ -89,7 +89,7 @@ namespace Task_Management.Models
         {
             get
             {
-                return this.Assignee;
+                return this.assignee;
             }
             set
             {

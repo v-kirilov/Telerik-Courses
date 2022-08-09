@@ -43,12 +43,20 @@ namespace Task_Management.Commands
                     int newFeedbackRating = this.ParseIntParameter(value, "Rating");
                     var oldRating = feedback.Rating;
                     feedback.Rating = newFeedbackRating;
+                    if (feedback.Rating == oldRating)
+                    {
+                        return $"Feedback with ID: {feedback.Id} is already: {feedback.Rating}";
+                    }
                     return $"Changed the rating of feedback with ID: {feedback.Id} from {oldRating} to {feedback.Rating}";
 
                 case "status":
                     Status newFeedbackStatus = this.ParseFeedbackStatusParameter(value, "Status");
                     var oldStatus = feedback.Status;
                     feedback.Status = newFeedbackStatus;
+                    if (feedback.Status == oldStatus)
+                    {
+                        return $"Feedback with ID: {feedback.Id} is already: {feedback.Status}";
+                    }
                     return $"Changed the status of feedback with ID: {feedback.Id} from {oldStatus} to {feedback.Status}";
 
 

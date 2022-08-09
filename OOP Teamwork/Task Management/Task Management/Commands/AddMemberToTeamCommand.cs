@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Task_Management.Commands
 {
-    internal class AddMemberToTeamCommand : BaseCommand
+    public class AddMemberToTeamCommand : BaseCommand
     {
         public AddMemberToTeamCommand(IList<string> commandParameters, IRepository repository)
            : base(commandParameters, repository)

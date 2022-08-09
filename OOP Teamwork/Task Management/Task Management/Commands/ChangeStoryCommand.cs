@@ -43,18 +43,30 @@ namespace Task_Management.Commands
                     Priority newStoryPriority = this.ParseStoryPriorityParameter(value, "Priority");
                     var oldPriority = story.Priority;
                     story.Priority = newStoryPriority;
+                    if (story.Priority == oldPriority)
+                    {
+                        return $"Story with ID: {story.Id} is already: {story.Priority}";
+                    }
                     return $"Changed the priority of status with ID: {story.Id} from {oldPriority} to {story.Priority}";
 
                 case "size":
                     Size newStorySize = this.ParseSizeParameter(value, "Size");
                     var oldSize = story.Size;
                     story.Size = newStorySize;
+                    if (story.Size == oldSize)
+                    {
+                        return $"Story with ID: {story.Id} is already: {story.Size}";
+                    }
                     return $"Changed the size of story with ID: {story.Id} from {oldSize} to {story.Size}";
 
                 case "status":
                     Status newStoryStatus = this.ParseStoryStatusParameter(value, "Status");
                     var oldStatus = story.Status;
                     story.Status = newStoryStatus;
+                    if (story.Status == oldStatus)
+                    {
+                        return $"Story with ID: {story.Id} is already: {story.Status}";
+                    }
                     return $"Changed the status of story with ID: {story.Id} from {oldStatus} to {story.Status}";
 
 

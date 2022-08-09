@@ -9,7 +9,7 @@ using Task_Management.Models.Contracts;
 
 namespace Task_Management.Commands
 {
-    internal class CreateBoardCommand : BaseCommand
+    public class CreateBoardCommand : BaseCommand
     {
         public CreateBoardCommand(IList<string> commandParameters, IRepository repository)
             : base(commandParameters, repository)

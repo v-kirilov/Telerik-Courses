@@ -7,7 +7,7 @@ using Task_Management.Models.Contracts;
 
 namespace Task_Management.Commands
 {
-    internal class ShowAllTeamMembersCommand : BaseCommand
+    public class ShowAllTeamMembersCommand : BaseCommand
     {
         public ShowAllTeamMembersCommand(IList<string> commandParameters, IRepository repository)
             : base(commandParameters, repository)

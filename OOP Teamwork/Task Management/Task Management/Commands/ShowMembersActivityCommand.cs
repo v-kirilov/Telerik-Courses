@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Task_Management.Commands
 {
-    internal class ShowMembersActivityCommand : BaseCommand
+    public class ShowMembersActivityCommand : BaseCommand
     {
         public ShowMembersActivityCommand(IList<string> commandParameters, IRepository repository)
             : base(commandParameters, repository)

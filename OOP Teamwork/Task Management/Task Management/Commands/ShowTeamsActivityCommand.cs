@@ -8,7 +8,7 @@ using Task_Management.Models.Contracts;
 
 namespace Task_Management.Commands
 {
-    internal class ShowTeamsActivityCommand : BaseCommand
+    public class ShowTeamsActivityCommand : BaseCommand
     {
         public ShowTeamsActivityCommand(IList<string> commandParameters, IRepository repository)
            : base(commandParameters, repository)

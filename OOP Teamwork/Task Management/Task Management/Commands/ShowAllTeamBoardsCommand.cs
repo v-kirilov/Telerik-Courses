@@ -7,7 +7,7 @@ using Task_Management.Models.Contracts;
 
 namespace Task_Management.Commands
 {
-    internal class ShowAllTeamBoardsCommand :BaseCommand
+    public class ShowAllTeamBoardsCommand :BaseCommand
     {
         public ShowAllTeamBoardsCommand(IList<string> commandParameters, IRepository repository)
             :base(commandParameters, repository)

@@ -31,10 +31,14 @@ namespace Task_Management.Commands
             string filter = this.CommandParameters[0];
             string filter2 = string.Empty;
 
-            if (this.CommandParameters[1].ToLower() == "and")
+            if (this.CommandParameters.Count > 1)
             {
-                filter2 = this.CommandParameters[2];
+                if (this.CommandParameters[1].ToLower() == "and")
+                {
+                    filter2 = this.CommandParameters[2];
+                }
             }
+            
 
             return ListTasksWithAssignee(filter, filter2);
 
@@ -61,7 +65,7 @@ namespace Task_Management.Commands
                 }
                 else if (base.Repository.Bugs.Any(x => x.Assignee.Name.ToLower() == filter.ToLower() && x.Assignee != null))
                 {
-                    bugListWithAssginee = base.Repository.Bugs.Where(x => x.Status.ToString().ToLower() == filter.ToLower()).ToList();
+                    bugListWithAssginee = base.Repository.Bugs.Where(x => x.Assignee.Name.ToString().ToLower() == filter.ToLower()).ToList();
                 }
                 else if (filter.ToLower() == "all")
                 {

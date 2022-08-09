@@ -44,18 +44,30 @@ namespace Task_Management.Commands
                     Priority newBugPriority = this.ParseBugPriorityParameter(value, "Priority");
                     var oldPriority = bug.Priority;
                     bug.Priority = newBugPriority;
+                    if (bug.Priority == oldPriority)
+                    {
+                        return $"Bug with ID: {bug.Id} is already: {bug.Priority}";
+                    }
                     return $"Changed the priority of bug with ID: {bug.Id} from {oldPriority} to {bug.Priority}";
 
                 case "severity":
                     Severity newBugSeverity = this.ParseSeverityParameter(value, "Severity");
                     var oldSeverity = bug.Severity;
-                    bug.Severity= newBugSeverity;
+                    bug.Severity = newBugSeverity;
+                    if (bug.Severity == oldSeverity)
+                    {
+                        return $"Bug with ID: {bug.Id} is already: {bug.Severity}";
+                    }
                     return $"Changed the severity of bug with ID: {bug.Id} from {oldSeverity} to {bug.Severity}";
 
                 case "status":
                     Status newBugStatus = this.ParseBugStatusParameter(value, "Status");
                     var oldStatus = bug.Status;
                     bug.Status = newBugStatus;
+                    if (bug.Status == oldStatus)
+                    {
+                        return $"Bug with ID: {bug.Id} is already: {bug.Status}";
+                    }
                     return $"Changed the status of bug with ID: {bug.Id} from {oldStatus} to {bug.Status}";
 
 
