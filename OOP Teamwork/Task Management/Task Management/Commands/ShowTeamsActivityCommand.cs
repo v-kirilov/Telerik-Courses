@@ -29,14 +29,14 @@ namespace Task_Management.Commands
                 var teamName = this.CommandParameters[0];
                 // Parameters:
                 //  [0] - name of team which history we would like to view.
-                if (!this.Repository.Teams.Any(x=>x.Name==teamName))
-                {
-                    return $"There are no teams with name: [{teamName}].";
-                }
                 if (this.Repository.Teams.Count == 0)
                 {
                     return $"There are no teams created.";
                 }
+                if (!this.Repository.Teams.Any(x=>x.Name==teamName))
+                {
+                    return $"There are no teams with name: [{teamName}].";
+                }  
                 else
                 {
                     var team = this.Repository.Teams.FirstOrDefault(x => x.Name == teamName);

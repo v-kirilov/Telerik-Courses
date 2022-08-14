@@ -39,7 +39,7 @@ namespace Task_Management.Commands
                     throw new InvalidUserInputException("You can't unassign task that is already unassigned.");
                 }
                 bug.Assignee = null;
-                return $"Task with ID {bug.Id} was unassigned";
+                return $"Task with ID {bug.Id} was unassigned.";
             }
             else if (task is IStory)
             {

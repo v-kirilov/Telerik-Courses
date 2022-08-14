@@ -51,7 +51,7 @@ namespace Task_Management.Commands
                 IStory story = base.Repository.FindStoryById(taskId);
                 if (story.Assignee != null)
                 {
-                    throw new InvalidUserInputException("You can't assign task that already has an assignee. Please unnassign the task first.");
+                    throw new InvalidUserInputException("You can't assign task that already has an assignee. Please unassign the task first.");
                 }
                 story.Assignee = assignee;
                 return $"Task with ID {story.Id} assigned to {assignee.Name}.";

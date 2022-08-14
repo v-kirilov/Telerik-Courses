@@ -8,7 +8,7 @@ using Task_Management.Models.Contracts;
 
 namespace Task_Management.Commands
 {
-    class ListTasksWithAssigneeCommand : BaseCommand
+    public class ListTasksWithAssigneeCommand : BaseCommand
     {
         public ListTasksWithAssigneeCommand(IList<string> commandParameters, IRepository repository)
             : base(commandParameters, repository)
@@ -18,9 +18,9 @@ namespace Task_Management.Commands
 
         public override string Execute()
         {
-            if (this.CommandParameters.Count < 1)
+            if (this.CommandParameters.Count < 1 || this.CommandParameters.Count > 3)
             {
-                throw new InvalidUserInputException($"Invalid number of arguments. Expected: 1, Received: {this.CommandParameters.Count}");
+                throw new InvalidUserInputException($"Invalid number of arguments. Expected: more than 1 and less than 4, Received: {this.CommandParameters.Count}");
             }
 
             // [0] - string filter by: status or assignee
@@ -83,7 +83,7 @@ namespace Task_Management.Commands
                 }
                 else if (base.Repository.Stories.Any(x => x.Assignee.Name.ToLower() == filter.ToLower() && x.Assignee != null))
                 {
-                    storyListWithAssginee = base.Repository.Stories.Where(x => x.Status.ToString().ToLower() == filter.ToLower()).ToList();
+                    storyListWithAssginee = base.Repository.Stories.Where(x => x.Assignee.Name.ToString().ToLower() == filter.ToLower()).ToList();
                 }
                 else if (filter.ToLower() == "all")
                 {
@@ -105,14 +105,14 @@ namespace Task_Management.Commands
             else 
             {
                 if (!base.Repository.Bugs.Any(x => x.Status.ToString().ToLower() == filter.ToLower() && x.Assignee != null) &&
-                    base.Repository.Bugs.Any(x => x.Assignee.Name.ToLower() == filter2.ToLower() && x.Assignee != null))
+                    !base.Repository.Bugs.Any(x => x.Assignee.Name.ToLower() == filter2.ToLower() && x.Assignee != null))
                 {
                     isBugListMissingFilter = true;
                 }
                 bugListWithAssginee = base.Repository.Bugs.Where(x => x.Status.ToString().ToLower() == filter.ToLower() && x.Assignee != null && x.Assignee.Name.ToLower() == filter2.ToLower()).ToList();
 
                 if (!base.Repository.Stories.Any(x => x.Status.ToString().ToLower() == filter.ToLower() && x.Assignee != null) &&
-                    base.Repository.Stories.Any(x => x.Assignee.Name.ToLower() == filter2.ToLower() && x.Assignee != null))
+                    !base.Repository.Stories.Any(x => x.Assignee.Name.ToLower() == filter2.ToLower() && x.Assignee != null))
                 {
                     isStoryListMissingFilter = true;
                 }
@@ -126,10 +126,10 @@ namespace Task_Management.Commands
                 combinedListWithAssginee = bugListWithAssginee.Concat<ITask>(storyListWithAssginee).OrderBy(x => x.Title).ToList();
             }
 
+            int counter = 1;
             foreach (var task in combinedListWithAssginee)
-            {
-                int counter = 1;
-                sb.AppendLine($"{counter} {task}");
+            { 
+                sb.AppendLine($"{counter}: {task}");
                 counter++;
             }
 

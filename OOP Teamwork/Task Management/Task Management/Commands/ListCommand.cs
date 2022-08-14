@@ -44,11 +44,12 @@ namespace Task_Management.Commands
                     filter2 = this.CommandParameters[3];
                     sortby = this.CommandParameters[4];
                 }
+                else
+                {
+                    sortby = this.CommandParameters[2];
+                }
             }            
-            else
-            {
-                sortby = this.CommandParameters[2];
-            }
+            
 
             return ListTask(typeOfTask, filter, filter2, sortby);
 
@@ -82,7 +83,7 @@ namespace Task_Management.Commands
                 }
                 else if (listBugs.Any(x => x.Assignee.Name.ToLower() == filter.ToLower()))
                 {
-                    listBugFiltered = listBugs.Where(x => x.Status.ToString().ToLower() == filter.ToLower()).ToList();
+                    listBugFiltered = listBugs.Where(x => x.Assignee.Name.ToString().ToLower() == filter.ToLower()).ToList();
                 }
                 else if (filter.ToLower() == "all")
                 {
@@ -90,20 +91,20 @@ namespace Task_Management.Commands
                 }
                 else
                 {
-                    throw new InvalidCastException("No status or assignee matches the filter");
+                    throw new InvalidUserInputException("No status or assignee matches the filter");
                 }
             }
             else
             {
                 if (!listBugs.Any(x => x.Status.ToString().ToLower() == filter.ToLower()))
                 {
-                    throw new InvalidCastException("The first filter does not match any of the status types");
+                    throw new InvalidUserInputException("The first filter does not match any of the status types");
                 }
                 listBugFiltered = listBugs.Where(x => x.Status.ToString().ToLower() == filter.ToLower()).ToList();
 
-                if (listBugFiltered.Any(x => x.Assignee.Name.ToLower() == filter2.ToLower()))
+                if (!listBugFiltered.Any(x => x.Assignee.Name.ToLower() == filter2.ToLower()))
                 {
-                    throw new InvalidCastException("The second filter does not match any of the assignees names");
+                    throw new InvalidUserInputException("The second filter does not match any of the assignees names");
                 }
                 listBugFiltered = listBugFiltered.Where(x => x.Assignee.Name.ToLower() == filter2.ToLower()).ToList();
             }
@@ -126,10 +127,10 @@ namespace Task_Management.Commands
             }
 
             var sb = new StringBuilder();
+            int counter = 1;
             foreach (var bug in listBugFilteredAndSorted)
-            {
-                int counter = 1;
-                sb.AppendLine($"{counter} {bug}");
+            {                
+                sb.AppendLine($"{counter}: {bug}");
                 sb.AppendLine($"  History of the bug:");
                 sb.AppendLine($"  {bug.ViewHistory()}");
                 counter++;
@@ -151,7 +152,7 @@ namespace Task_Management.Commands
                 }
                 else if (listStories.Any(x => x.Assignee.Name.ToLower() == filter.ToLower()))
                 {
-                    listStoriesFiltered = listStories.Where(x => x.Status.ToString().ToLower() == filter.ToLower()).ToList();
+                    listStoriesFiltered = listStories.Where(x => x.Assignee.Name.ToString().ToLower() == filter.ToLower()).ToList();
                 }
                 else if (filter.ToLower() == "all")
                 {
@@ -159,20 +160,20 @@ namespace Task_Management.Commands
                 }
                 else
                 {
-                    throw new InvalidCastException("No status or assignee matches the filter");
+                    throw new InvalidUserInputException("No status or assignee matches the filter");
                 }
             }
             else
             {
                 if (!listStories.Any(x => x.Status.ToString().ToLower() == filter.ToLower()))
                 {
-                    throw new InvalidCastException("The first filter does not match any of the status types");
+                    throw new InvalidUserInputException("The first filter does not match any of the status types");
                 }
                 listStoriesFiltered = listStories.Where(x => x.Status.ToString().ToLower() == filter.ToLower()).ToList();
 
-                if (listStoriesFiltered.Any(x => x.Assignee.Name.ToLower() == filter2.ToLower()))
+                if (!listStoriesFiltered.Any(x => x.Assignee.Name.ToLower() == filter2.ToLower()))
                 {
-                    throw new InvalidCastException("The second filter does not match any of the assignees names");
+                    throw new InvalidUserInputException("The second filter does not match any of the assignees names");
                 }
                 listStoriesFiltered = listStoriesFiltered.Where(x => x.Assignee.Name.ToLower() == filter2.ToLower()).ToList();
             }
@@ -187,7 +188,7 @@ namespace Task_Management.Commands
                 case "priority":
                     listStoriesFilteredAndSorted = listStoriesFiltered.OrderBy(x => x.Priority).ToList();
                     break;
-                case "severity":
+                case "size":
                     listStoriesFilteredAndSorted = listStoriesFiltered.OrderBy(x => x.Size).ToList();
                     break;
                 default:
@@ -195,10 +196,10 @@ namespace Task_Management.Commands
             }
 
             var sb = new StringBuilder();
+            int counter = 1;
             foreach (var story in listStoriesFilteredAndSorted)
             {
-                int counter = 1;
-                sb.AppendLine($"{counter} {story}");
+                sb.AppendLine($"{counter}: {story}");
                 sb.AppendLine($"  History of the story:");
                 sb.AppendLine($"  {story.ViewHistory()}");
                 counter++;
@@ -224,7 +225,7 @@ namespace Task_Management.Commands
                 }
                 else
                 {
-                    throw new InvalidCastException("No status matches the filter");
+                    throw new InvalidUserInputException("No status matches the filter");
                 }
             }
             else
@@ -247,10 +248,10 @@ namespace Task_Management.Commands
             }
 
             var sb = new StringBuilder();
+            int counter = 1;
             foreach (var story in listFeedbacksFilteredAndSorted)
             {
-                int counter = 1;
-                sb.AppendLine($"{counter} {story}");
+                sb.AppendLine($"{counter}: {story}");
                 sb.AppendLine($"  History of the story:");
                 sb.AppendLine($"  {story.ViewHistory()}");
                 counter++;

@@ -48,9 +48,9 @@ namespace Task_Management.Commands
         private string PrintTasks(IEnumerable<ITask> tasks)
         {
             var sb = new StringBuilder();
+            int counter = 1;
             foreach (var task in tasks)
             {
-                int counter = 1;
                 sb.AppendLine($"{counter}: {task}");
                 Console.WriteLine();
                 counter++;

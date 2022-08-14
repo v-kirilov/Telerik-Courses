@@ -121,7 +121,8 @@ namespace Task_Management.Models
             sb.AppendLine($" Priority: {this.Priority}");
             sb.AppendLine($" Size: {this.Size}");
             sb.AppendLine($" Status: {this.Status}");
-            sb.AppendLine($" Assignee: {this.Assignee}");
+            sb.AppendLine($" Assignee:");
+            sb.AppendLine($"{this.Assignee}");
             sb.AppendLine($"{base.PrintComments()}");
 
             return sb.ToString().Trim();

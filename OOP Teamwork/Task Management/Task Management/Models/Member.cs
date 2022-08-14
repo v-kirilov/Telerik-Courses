@@ -59,6 +59,7 @@ namespace Task_Management.Models
             {
                 this.tasks.Remove(task);
                 this.eventLogs.Add(new EventLog($"Task with ID: {task.Id} and title: {task.Title} was unassigned from member: {this.Name}"));
+                return;
             }
             throw new InvalidUserInputException($"Task to remove not found in member: {this.Name} tasks");
         }
