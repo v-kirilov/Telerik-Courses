@@ -1,0 +1,19 @@
+﻿@using ForumSystem.Models.DTO
+@{
+    this.ViewData["Title"] = "Comments-Update";
+
+}
+@model CommentDto
+
+<div class="p-4">
+    <h4>Comment:</h4>
+    <form asp-controller="Posts" asp-action="UpdateComment" asp-route-id="@this.Model.CommentId" method="post" class="container">
+        <div class="form-group">
+            <label asp-for="@this.Model.CommentContent">Updated Comment Content</label>
+            <input asp-for="@this.Model.CommentContent" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Comment Content">
+            <small id="emailHelp" class="form-text text-muted">Title must be between 16 and 64 characters!</small>
+            <span asp-validation-for="@this.Model.CommentContent" class="form-error text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-success btn-lg">Update Comment</button>
+    </form>
+</div>

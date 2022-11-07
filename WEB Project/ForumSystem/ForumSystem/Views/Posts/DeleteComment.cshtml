@@ -1,0 +1,14 @@
+﻿@{
+    this.ViewData["Title"] = "Comments-Delete";
+}
+@model CommentDto
+
+<div class="jumbotron container">
+        <h1>Are you sure you want to delete this comment?</h1>
+        <h3>ID:@this.Model.CommentId</h3>
+        <p>@this.Model.CommentContent</p>
+        <form asp-controller="Posts" asp-action="DeleteComment" method="post">
+            <input type="submit" value="Delete"  class="btn btn-lg btn-danger" />
+            <a asp-controller="Posts" asp-action="Index" class="btn btn-lg btn btn-dark" role="button">Back</a>
+        </form>
+</div>

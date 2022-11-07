@@ -1,0 +1,9 @@
+﻿@{
+	this.ViewData["Title"] = "Post-Update";
+	this.ViewData["Action"] = "Update";
+	this.ViewData["SubmitButton"] = "Update";
+	this.ViewData["Id"]=this.Model.Id;
+}
+@model PostDto
+
+<partial name="_PostsForm"/>

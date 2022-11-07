@@ -1,0 +1,183 @@
+﻿@inject IAuthManager authManager;
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<title>ForumSystem - @this.ViewData["Title"]</title>
+    <link rel="icon" type="image/x-icon" href="~/images/icons8-globe-96.png">
+	@*<link rel="stylesheet" href="~/css/site.css" />*@
+	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+
+	@RenderSection("Scripts",false/*required*/)
+</head>
+
+<body>
+    <header>
+        <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark" id="navbar1">
+            <div class="container">
+                <a asp-controller="Home" asp-action="Index" class="navbar-brand mr-1 mb-1 mt-0">Around the World.</a>
+                <div class="navbar-collapse collapse justify-content-center" id="collapsingNavbar">
+
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a asp-controller="Posts" asp-action="Index" class="navbar-brand">Posts</a>
+                        </li>
+                        <li class="nav-item">
+                            @if (this.authManager.CurrentUser != null)
+                            {
+                                <a asp-controller="Users" asp-action="Index" class="navbar-brand">Users</a>
+                            }
+                        </li>
+                        <li class="nav-item">
+                            <a asp-controller="Home" asp-action="About" class="navbar-brand">About</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="navbar-brand" href="/api/swagger">Developer API</a>
+                        </li>
+                        <li class="nav-item">
+                            @if (this.authManager.CurrentUser != null)
+                            {
+                                <a asp-controller="Users" asp-action="Details" asp-route-id="@this.authManager.CurrentUser.Id" class="navbar-brand">My Profile</a>
+                            }
+                        </li>
+                        <li class="nav-item">
+                            @if (this.authManager.CurrentUser == null)
+                            {
+                                <a asp-controller="Users" asp-action="Login" class="navbar-brand">Login/Register</a>
+                            }
+                            else
+                            {
+                                <a asp-controller="Users" asp-action="Logout" class="navbar-brand">Logout</a>
+                            }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <br />
+        <br />
+        <br />
+        <br />
+    </header>
+
+
+    <div class="body-content">
+        @RenderBody()
+    </div>
+    <hr />
+    @*<footer>
+        <small>© Copyright @DateTime.Now.Year, ForumSystem</small>
+        </footer>*@
+    <footer id="footer">
+        <div class="footer-top">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-6">
+                        <div class="footer-info">
+                            <h3>ATW</h3>
+                            <p>
+                                A105 GREENWICH Street
+                                <br>
+                                LONDON 535022, UK
+                                <br>
+                                <br>
+                                <strong>Phone:</strong>
+                                +1 555 55555 55
+                                <br>
+                                <strong>Email:</strong>
+                                info@AroungtheWorld.com
+                                <br>
+                            </p>
+                            <div class="social-links mt-3">
+                                <a href="#" class="twitter">
+                                    <i class="bx bxl-twitter">
+                                    </i>
+                                </a>
+                                <a href="#" class="facebook">
+                                    <i class="bx bxl-facebook"></i>
+                                </a>
+                                <a href="#" class="instagram">
+                                    <i class="bx bxl-instagram"></i>
+                                </a>
+                                <a href="#" class="google-plus">
+                                    <i class="bx bxl-skype"></i>
+                                </a>
+                                <a href="#" class="linkedin">
+                                    <i class="bx bxl-linkedin">
+                                    </i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-2 col-md-6 footer-links">
+                        <h4>Useful Links</h4>
+                        <ul>
+                            <li>
+                                <i class="bx bx-chevron-right"></i>
+                                <a href="#">Home</a>
+                            </li>
+                            <li>
+                                <i class="bx bx-chevron-right"></i>
+                                <a href="#">About us</a>
+                            </li>
+                            <li>
+                                <i class="bx bx-chevron-right"></i>
+                                <a href="#">Services</a>
+                            </li>
+                            <li>
+                                <i class="bx bx-chevron-right"></i>
+                                <a href="#">Terms of service</a>
+                            </li>
+                            <li>
+                                <i class="bx bx-chevron-right"></i>
+                                <a href="#">Privacy policy</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-6 footer-links">
+                        <h4>Our Services</h4>
+                        <ul>
+                            <li>
+                                <i class="bx bx-chevron-right"></i>
+                                <a href="#">Web Design</a>
+                            </li>
+                            <li>
+                                <i class="bx bx-chevron-right"></i>
+                                <a href="#">Web Development</a>
+                            </li>
+                            <li>
+                                <i class="bx bx-chevron-right"></i>
+                                <a href="#">Product Management</a>
+                            </li>
+                            <li>
+                                <i class="bx bx-chevron-right"></i>
+                                <a href="#">Marketing</a>
+                            </li>
+                            <li>
+                                <i class="bx bx-chevron-right"></i>
+                                <a href="#">Graphic Design</a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-4 col-md-6 footer-newsletter">
+                        <h4>Our Newsletter</h4>
+                        <p>Subscribe to get the latest comments on your posts.</p>
+                        <form action="" method="post">
+                            <input type="email" name="email">
+                            <input type="submit" value="Subscribe">
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div><div class="container"><div class="copyright"> © Copyright <strong><span>Team 02</span></strong>. All Rights Reserved</div><div class="credits"> Designed by Telerik Academy Team 02</div></div>
+    </footer>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    @*<script src="~/lib/jquery/dist/jquery.min.js"></script>*@
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+
+	
+	
+</body>
+
+</html>

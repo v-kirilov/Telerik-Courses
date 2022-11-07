@@ -1,0 +1,39 @@
+﻿@{
+    this.ViewData["Title"] = "Comments";
+}
+@model List<CommentDto>
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
+<body>
+    <div class="body-content">
+        <h3 class="p-3">Comments</h3>
+    </div>
+    @if (this.Model.Count() <= 0)
+    {
+        <p>
+            <h3 align="center">No comments found 😔</h3>
+        </p>
+    }
+    else
+    {
+        <div class="d-flex flex-wrap">
+        @foreach (var comment in this.Model)
+        {
+                <div class="p-2 card rounded-pill m-3">
+                    <div class="card-body"> 
+                    <h5 class="card-title">@comment.Author</h5>
+                    <p class="card-text">@comment.CommentContent</p>
+                    <a asp-controller="Posts" asp-action="CommentLikes" asp-route-id="@comment.CommentId" class="btn btn-success rounded-pill btn-sm"><i class="fas fa-thumbs-up"></i> Likes:&nbsp; @comment.CommentReactions.Where(x => x.Reaction == "Like").Count()</a>
+                    <a asp-controller="Posts" asp-action="CommentDislikes" asp-route-id="@comment.CommentId" class="btn btn-danger rounded-pill btn-sm"><i class="fas fa-thumbs-down"></i> Dislikes:&nbsp; @comment.CommentReactions.Where(x => x.Reaction == "Dislike").Count()</a>
+                    <a asp-controller="Posts" asp-action="UpdateComment" asp-route-id="@comment.CommentId" class="btn btn-primary rounded-pill btn-sm">Update</a>
+                    <a asp-controller="Posts" asp-action="DeleteComment" asp-route-id="@comment.CommentId" class="btn btn-secondary rounded-pill btn-sm">Delete</a>
+                    <a asp-controller="Posts" asp-action="Details" asp-route-id="@comment.PostId" class="btn btn-info rounded-pill btn-sm">Post</a>
+                </div>
+                </div>
+        }
+        </div>
+}
+        
+ 
+</body>
+    

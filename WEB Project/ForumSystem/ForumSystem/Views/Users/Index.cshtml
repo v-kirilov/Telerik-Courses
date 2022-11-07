@@ -1,0 +1,161 @@
+﻿@{
+    this.ViewData["Title"] = "Users";
+
+    string blockStatus = null;
+    string blockStatusColor = null;
+
+    string roleColor = null;
+}
+
+@model PaginatedList<User>
+@inject IAuthManager authManager
+
+<body>
+    <div class="body-content">
+        <h3 class="p-3">Users</h3>
+    </div>
+
+    <nav class="navbar navbar-light bg-light">
+        <form asp-controller="Users" asp-action="Index" class="form-inline" method="get">
+
+            <p class="p-2">
+                <label for="select">Search by</label>
+                <select id="select" name="filter">
+                    <option value="">Choose...</option>
+                    <optgroup label="Options:">
+                        <option value="Username">Username</option>
+                        <option value="Email">Email</option>
+                        <option value="FirstName">First Name</option>
+                    </optgroup>
+
+                </select>
+            </p>
+            <input class="form-control mr-sm-2 p-2" name="search" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+
+            @*<p class="p-2">
+                <label for="select">Sort by</label>
+                <select id="select" name="sortFilter">
+                    <option value="">Choose...</option>
+                    <optgroup label="Sort By">
+                        <option value="Username">Username</option>
+                        <option value="Email">Email</option>
+                        <option value="FirstName">First Name</option>
+                    </optgroup>
+
+                </select>
+            </p>
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Sort</button>*@
+
+        </form>
+    </nav>
+
+    @if (this.Model.Count() <= 0)
+    {
+        <p>
+            <h3 align="center">No users found 😔</h3>
+        </p>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">Username</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">First Name</th>
+                    <th scope="col">Last Name</th>
+                    <th scope="col">Role</th>
+                    @if (this.authManager.CurrentUser.Role.Name == "Admin")
+                    {
+                        <th scope="col">Status</th>
+                    }
+
+                    <th scope="col">Options</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in this.Model)
+                {
+                    var tm = "#myModal" + user.Id;
+                    var mid = "myModal" + user.Id;
+                    if (user.IsBlocked == true)
+                    {
+                        blockStatus = "Blocked";
+                        blockStatusColor = "text-danger";
+                    }
+                    else
+                    {
+                        blockStatus = "Unblocked";
+                        blockStatusColor = "text-primary";
+                    }
+
+                    if (user.Role.Name == "Admin")
+                    {
+                        roleColor = "text-success";
+                    }
+                    else
+                    {
+                        roleColor = "text-dark";
+                    }
+
+                    <tr>
+                        <td>@user.Username</td>
+                        <td>@user.Email</td>
+                        <td>@user.FirstName</td>
+                        <td>@user.LastName</td>
+                        <td class="@roleColor">@user.Role.Name</td>
+                        @if (this.authManager.CurrentUser.Role.Name == "Admin")
+                        {
+                            <td class="@blockStatusColor">@blockStatus</td>
+                        }
+                        <td>
+                            <a asp-controller="Users" asp-action="Details" asp-route-id="@user.Id" class="btn btn-dark">Details</a>
+                            @if (this.authManager.CurrentUser.Role.Name == "Admin" || this.authManager.CurrentUser.Id == user.Id)
+                            {
+                                <a asp-controller="Users" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-primary">Edit</a>
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="@tm">
+                                    Delete
+                                </button>
+
+                                <div class="modal fade" id="@mid" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="myModalLabel">Delete Confirmation</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            </div>
+                                            <div class="modal-body text-center mb-5">
+                                                <img src="~/images/right.png" class="img-responsive">
+                                                <h1>Are You Sure?</h1>
+                                                <p>Do you really want to delete user: <b style="font-size: 17px">@user.Username</b>? This process cannot be undone.</p>
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-secondary btn-lg mr-2 rounded-lg" data-dismiss="modal">Cancel</button>
+                                                    <form asp-controller="Users" asp-action="Delete" asp-route-id="@user.Id" method="post">
+                                                        <input type="submit" value="Delete" class="btn btn-lg btn-danger" />
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <br />
+
+    @{
+        string prevButtonState = !this.Model.HasPrevPage ? "disabled" : "";
+        string nextButtonState = !this.Model.HasNextPage ? "disabled" : "";
+    }
+
+    <a asp-controller="Users" asp-action="Index" asp-route-PageNumber="@(this.Model.PageNumber - 1)" class="btn btn-dark @prevButtonState">Prev</a>
+    <a asp-controller="Users" asp-action="Index" asp-route-PageNumber="@(this.Model.PageNumber + 1)" class="btn btn-dark @nextButtonState">Next</a>
+
+</body>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>

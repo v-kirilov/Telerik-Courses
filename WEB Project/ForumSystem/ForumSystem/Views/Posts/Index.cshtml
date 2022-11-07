@@ -1,0 +1,164 @@
+﻿@{
+	this.ViewData["Title"] = "Posts";
+    string prevButtonState = !this.Model.HasPrevPage ? "disabled" : "";
+    string nextButtonState = !this.Model.HasNextPage ? "disabled" : "";
+    
+}
+@model PaginatedList<ForumSystem.Models.DTO.PostDto>;
+
+   
+@section Scripts
+{
+    <script src="~/lib/jquery/dist/jquery-3.5.1.js"></script>
+    <script src="~/lib/jquery/dist/jquery.dataTables.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/dataTables.bootstrap4.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+        	$('#example').DataTable();
+        });ар
+	</script>
+}
+
+
+	<body>
+		<div class="body-content">
+			<h3 class="p-3">Posts</h3>
+			<a asp-controller="Posts" asp-action="Create" class="btn btn-success btn-lg m-3">Add New Post</a>
+		</div>
+
+		<nav class="navbar navbar-light bg-light">
+			<form asp-controller="Posts" asp-action="Index" class="form-inline" method="get">
+
+				<p class="p-2">
+					<label for="select">Select filter</label>
+					<select id="select" name="filter">
+						<option value="">Choose...</option>
+						<optgroup label="Filter By">
+							<option value="Title">Title</option>
+							<option value="Content">Content</option>
+							<option value="Username">Username</option>
+						</optgroup>
+					</select>
+				</p>
+
+				<input class="form-control mr-sm-2 p-2" name="search" type="search" placeholder="Search" aria-label="Search">
+				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+				<span class="navbar-text p-2">
+					Search by Title, Content or User!
+				</span>
+
+				<p class="p-2">
+					<label for="select">Select Sorting</label>
+					<select id="select" name="sort">
+						<option value="">Choose...</option>
+						<optgroup label="Filter By">
+							<option value="Popular">Most Popular</option>
+							<option value="Recent">Most Recent</option>
+						</optgroup>
+					</select>
+				</p>
+
+				<button class="btn btn-outline-success my-2 my-sm-0" type="submit">Sort</button>
+				<span class="navbar-text p-2">
+					Show a list of 10 Most Popular or Most Recent Posts!
+				</span>
+
+				@*<p class="p-2 float-md-right">
+			<label for="select">Posts per page</label>
+			<select id="select" name="PageSize">
+			<option value="">Choose...</option>
+			<optgroup label="Posts:">
+			<option value="2">2</option>
+			<option value="3">3</option>
+			<option value="5">5</option>
+			</optgroup>
+
+			</select>
+			</p>*@
+			</form>
+		<br />
+		<hr />
+		</nav>
+		
+
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th scope="col">Id</th>
+					<th scope="col">User</th>
+					<th scope="col">Title</th>
+					<th scope="col">Content</th>
+					<th scope="col">Details</th>
+					<th scope="col">Update</th>
+					<th scope="col">Delete</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var post in this.Model)
+			{
+				<tr>
+					<th scope="row">@post.Id</th>
+					<td>@post.User</td>
+					<td>@post.Title</td>
+					<td>@post.Content</td>
+					<td>
+						<a asp-controller="Posts" asp-action="Details" asp-route-id="@post.Id" class="btn btn-dark">Details</a>
+					</td>
+					<td>
+						<a asp-controller="Posts" asp-action="Update" asp-route-id="@post.Id" class="btn btn-primary">Update</a>
+					</td>
+					<td>
+						<a asp-controller="Posts" asp-action="Delete" asp-route-id="@post.Id" class="btn btn-danger">Delete</a>
+					</td>
+				</tr>
+			}
+
+		</tbody>
+	</table>
+	<a asp-controller="Posts" asp-action="Index" asp-route-PageNumber="@(this.Model.PageNumber - 1)" class="btn btn-primary @prevButtonState m-2">Prev. Page</a>
+	<a>Page @this.Model.PageNumber of @this.Model.TotalPages</a>
+	<a asp-controller="Posts" asp-action="Index" asp-route-PageNumber="@(this.Model.PageNumber + 1)" class="btn btn-primary @nextButtonState m-2">Next Page</a>
+	<br />
+	<hr />
+	<br />
+	<table id="example" class="table table-striped table-bordered" style="width:100%">
+		<thead>
+			<tr>
+				<th>Id</th>
+				<th>User</th>
+				<th>Title</th>
+				<th>Content</th>
+				<th>Details</th>
+				<th>Update</th>
+				<th>Delete</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var post in this.Model)
+			{
+				<tr>
+					<td>@post.Id</td>
+					<td>@post.User</td>
+					<td>@post.Title</td>
+					<td>@post.Content</td>
+					<td><a asp-controller="Posts" asp-action="Details" asp-route-id="@post.Id" class="btn btn-dark">Details</a></td>
+					<td><a asp-controller="Posts" asp-action="Update" asp-route-id="@post.Id" class="btn btn-primary">Update</a></td>
+					<td><a asp-controller="Posts" asp-action="Delete" asp-route-id="@post.Id" class="btn btn-danger">Delete</a></td>
+				</tr>
+			}
+		</tbody>
+		<tfoot>
+			<tr>
+				<th>Id</th>
+				<th>User</th>
+				<th>Title</th>
+				<th>Content</th>
+				<th>Details</th>
+				<th>Update</th>
+				<th>Delete</th>
+			</tr>
+		</tfoot>
+	</table>
+</body>
+

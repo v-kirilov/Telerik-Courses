@@ -1,0 +1,29 @@
+﻿@{
+	this.ViewData["Title"] = "Post-Edit";
+}
+@model PostDto
+
+<form asp-controller="Posts" asp-action="@this.ViewData["Action"]" method="post" class="container">
+	<div class="form-group">
+		<label asp-for="Title">Post Title</label>
+		<input asp-for="Title" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Post Title">
+		<small id="emailHelp" class="form-text text-muted">Title must be between 16 and 64 characters!</small>
+		<span asp-validation-for="Title" class="form-error text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="Content">Post Content</label>
+		<textarea asp-for="Content" type="text" class="form-control" id="exampleInputPassword1" placeholder="Enter Post Content"></textarea>
+		<small id="emailHelp" class="form-text text-muted">Content must be between 32 and 8192 characters!</small>
+		<span asp-validation-for="Content" class="form-error text-danger"></span>
+
+	</div>
+
+	<button type="submit" class="btn btn-success btn-lg">@this.ViewData["SubmitButton"]</button>
+
+	<a asp-controller="Posts" asp-action="Index" class="btn btn-dark btn-lg">Back</a>
+	@if ((string)this.ViewData["Action"]!="Create")
+	{
+	  <a asp-controller="Posts" asp-action="Delete" asp-route-id="@this.ViewData["Id"]" class="btn btn-danger btn-lg">Delete</a>
+	}
+
+</form>

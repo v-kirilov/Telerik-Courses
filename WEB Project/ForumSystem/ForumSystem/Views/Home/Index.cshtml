@@ -1,0 +1,112 @@
+﻿@{
+	this.ViewData["Title"] = "Home";
+}
+@inject IUsersService userService
+@inject IPostsService postService
+@inject ICommentsService commentService
+@{
+	var countUsers = this.userService.GetAll().Count();
+	var countPosts = this.postService.GetAll().Count();
+	var countComments = this.commentService.GetAll().Count();
+}
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+	$('.carouselExampleIndicators').carousel({
+		setInterval: 1000
+	})
+</script>
+
+<div class="container">
+	<div id="carouselExampleIndicators" class="carousel slide carousel-fade" data-ride="carousel">
+		<ol class="carousel-indicators">
+			<li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+			<li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+			<li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+		</ol>
+		<div class="carousel-inner">
+			<div class="carousel-item active" data-interval="2500">
+				<img class="d-block w-100" src="https://prikachi.net/images/2022/11/05/Santorini.jpg" alt="Santorini image">
+				<div class="carousel-caption d-none d-md-block">
+					<h5>Greece - Santorini</h5>
+					<p>Cyclades islands in the Aegean Sea.</p>
+				</div>
+			</div>
+			<div class="carousel-item" data-interval="2500">
+				<img class="d-block w-100" src="https://prikachi.net/images/2022/11/05/Venice.jpg" alt="Venice image">
+				<div class="carousel-caption d-none d-md-block">
+					<h5>Italy - Venice</h5>
+					<p>Capital of northern Italy’s Veneto region.</p>
+				</div>
+			</div>
+			<div class="carousel-item" data-interval="2500">
+				<img class="d-block w-100" src="https://prikachi.net/images/2022/11/05/Tyrol.jpg" alt="Tyrol image">
+				<div class="carousel-caption d-none d-md-block">
+					<h5>Austria - Tyrol</h5>
+					<p>World-famous, beautiful, charming and exciting, the Alps.</p>
+				</div>
+			</div>
+		</div>
+		<a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+			<span class="carousel-control-prev-icon" aria-hidden="true"></span>
+			<span class="sr-only">Previous</span>
+		</a>
+		<a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+			<span class="carousel-control-next-icon" aria-hidden="true"></span>
+			<span class="sr-only">Next</span>
+		</a>
+	</div>
+</div>
+
+<div class="container">
+	<div class="page-banner home-banner">
+		<div class="row align-items-center flex-wrap-reverse h-100">
+			<div class="col-md-6 py-5 wow fadeInLeft" style="visibility: visible; animation-name: fadeInLeft;">
+				<h1 class="mb-4">Welcome to "Around the World"</h1>
+				<p class="text-lg text-grey mb-5">Join our community and share yor experience of visiting places of natural beauty.</p>
+				@*<a href="#" class="btn btn-primary btn-split">Watch Video <div class="fab"><span class="mai-play"></span></div></a>*@
+			</div>
+			<div class="col-md-6 py-5 wow zoomIn" style="visibility: visible; animation-name: zoomIn;">
+				<div class="img-fluid text-center">
+					<img src="https://prikachi.net/images/2022/11/05/main2.md.jpg" alt="DanPenia.jpg" border="0" height="300" width="500">
+				</div>
+			</div>
+		</div>
+		<a href="#about" class="btn-scroll" data-role="smoothscroll"><span class="mai-arrow-down"></span></a>
+	</div>
+</div>
+
+<div class="container">
+
+	<div class="card-deck">
+		<div class="card">
+			<img class="card-img-top" src="https://prikachi.net/images/2022/11/05/Users.jpg" alt="Users Picture">
+			<div class="card-body">
+				<h5 class="card-title">Users :&nbsp; @countUsers</h5>
+				<p class="card-text">Do you want to be a part of a well organized and ever growing community of Users?</p>
+			</div>
+			<div class="card-footer">
+				<small class="text-muted">Register and join our community.</small>
+			</div>
+		</div>
+		<div class="card">
+			<img class="card-img-top" src="https://prikachi.net/images/2022/11/05/Posts.jpg"  alt="Buble Forum Picture">
+			<div class="card-body">
+				<h5 class="card-title">Posts :&nbsp; @countPosts</h5>
+				<p class="card-text">Do you want to make posts on various themes and share knowledge with other users?</p>
+			</div>
+			<div class="card-footer">
+				<small class="text-muted">Go to the Posts section to make publish your Post.</small>
+			</div>
+		</div>
+		<div class="card">
+			<img class="card-img-top" src="https://prikachi.net/images/2022/11/05/Comment.jpg" alt="Card image cap">
+			<div class="card-body">
+				<h5 class="card-title">Comments :&nbsp; @countComments</h5>
+				<p class="card-text">Do you want to leave comments to your favourite posts, that adds value and can be seen by everyone?</p>
+			</div>
+			<div class="card-footer">
+				<small class="text-muted">Leave a comment or a like under posts.</small>
+			</div>
+		</div>
+	</div>
+</div>

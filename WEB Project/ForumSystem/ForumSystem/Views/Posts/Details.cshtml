@@ -1,0 +1,61 @@
+﻿@using ForumSystem.Models.DTO
+@{
+    this.ViewData["Title"] = "Post-Details";
+}
+@model PostMVCDto
+@{
+    var likes = this.Model.reactions.Where(x => x.Reaction == "Like");
+    var dislike = this.Model.reactions.Where(x => x.Reaction == "Dislike");
+}
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.1/css/all.css" crossorigin="anonymous">
+<section class="jumbotron text-center">
+    <div class="container">
+        <h1 class="jumbotron-heading">@this.Model.Title</h1>
+        <p class="lead text-muted">@this.Model.Content</p>
+        <p>
+            <a asp-controller="Posts" asp-action="PostLikes" asp-route-id="@this.Model.Id" class="btn btn-lg btn-secondary fw-bold border-white bg-success"><i class="fas fa-thumbs-up"></i> Likes:&nbsp; @likes.Count()</a>
+            <a asp-controller="Posts" asp-action="PostDislikes" asp-route-id="@this.Model.Id" class="btn btn-lg btn-secondary fw-bold border-white bg-danger"><i class="fas fa-thumbs-down"></i> Dislikes:&nbsp; @dislike.Count()</a>
+            <a asp-controller="Posts" asp-action="Update" asp-route-id="@this.Model.Id" class="btn btn-lg btn-primary fw-bold border-white">Update</a>
+            <a asp-controller="Posts" asp-action="Delete" asp-route-id="@this.Model.Id" class="btn btn-lg btn-secondary fw-bold border-white">Delete</a>
+        </p>
+    </div>
+
+</section>
+
+<div class="p-4">
+    
+    <form asp-controller="Posts" asp-action="Details" asp-route-id="@this.Model.Id" method="post" class="container">
+        <h4>Comments:</h4>
+        <div class="form-group">
+            <label asp-for="@this.Model.Comment.CommentContent">Comment Content</label>
+            <input asp-for="@this.Model.Comment.CommentContent" type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter Comment Content">
+            <small id="emailHelp" class="form-text text-muted">Content must be between 4 and 500 characters!</small>
+            <span asp-validation-for="@this.Model.Comment.CommentContent" class="form-error text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-success btn-lg">Add Comment</button>
+    </form>
+</div>
+<hr />
+@{
+    var listComments = this.Model.comments.OrderBy(c => c.CommentId);
+}
+<div class="d-flex flex-wrap">
+@foreach (var comment in listComments)
+{
+        <div class="p-2 card rounded-pill m-3">
+            <div class="card-body"> 
+            <h5 class="card-title">@comment.Author</h5>
+            <p class="card-text">@comment.CommentContent</p>
+            <a asp-controller="Posts" asp-action="CommentLikes" asp-route-id="@comment.CommentId" class="btn btn-success rounded-pill btn-sm"><i class="fas fa-thumbs-up"></i> Likes:&nbsp; @comment.CommentReactions.Where(x => x.Reaction == "Like").Count()</a>
+            <a asp-controller="Posts" asp-action="CommentDislikes" asp-route-id="@comment.CommentId" class="btn btn-danger rounded-pill btn-sm"><i class="fas fa-thumbs-down"></i> Dislikes:&nbsp; @comment.CommentReactions.Where(x => x.Reaction == "Dislike").Count()</a>
+            <a asp-controller="Posts" asp-action="UpdateComment" asp-route-id="@comment.CommentId" class="btn btn-primary rounded-pill btn-sm">Update</a>
+            <a asp-controller="Posts" asp-action="DeleteComment" asp-route-id="@comment.CommentId" class="btn btn-secondary rounded-pill btn-sm">Delete</a>
+            </div>
+        </div>
+}
+</div>
+
+
+
+

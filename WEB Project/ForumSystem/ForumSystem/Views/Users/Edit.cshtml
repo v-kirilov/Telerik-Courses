@@ -1,0 +1,171 @@
+﻿@model EditViewModel
+@inject IAuthManager authManager
+@inject IRolesService rolesService
+@{
+    var roles = new SelectList(this.rolesService.GetAll(), "Name", "Name");
+
+    string displayPhone = null;
+
+    if (this.Model.Role == "Admin")
+    {
+        displayPhone = "block";
+    }
+    else
+    {
+        displayPhone = "none";
+    }
+}
+
+<form asp-controller="Users" asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div class="container-xl px-4 mt-4">
+        <hr class="mt-0 mb-4">
+        <div class="row">
+            <div class="col-xl-4">
+                <!-- Profile picture card-->
+                <div class="card mb-4 mb-xl-0">
+                    <div class="card-header">Profile Picture</div>
+                    <div class="card-body text-center">
+                        <!-- Profile picture image-->
+                        @if (this.ViewData["PictureName"] != null)
+                        {
+                            <img class="img-account-profile rounded-circle mb-2" style="width: 150px;" src="~/images/@this.ViewData["PictureName"]" alt="">
+                        }
+                        else
+                        {
+                            <img class="img-account-profile rounded-circle mb-2" style="width: 150px;" src="~/images/user_default_logo.jpg" alt="">
+                        }
+                        <!-- Profile picture help block-->
+                        <div class="small font-italic text-muted mb-4">JPG or PNG no larger than 5 MB</div>
+                        <!-- Profile picture upload button-->
+                        @*<button class="btn btn-primary" type="button">Upload new image</button>*@
+                        <div class="container">
+                            <div class="form-group">
+                                <label asp-for="ProfileImage" class="control-label"></label>
+                                <br />
+                                <div class="custom-file">
+                                    <input asp-for="ProfileImage" class="custom-file-input" id="customFile">
+                                    <label class="custom-file-label" for="customFile">Choose file</label>
+                                </div>
+                                <span asp-validation-for="ProfileImage" class="text-danger"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-8">
+                <!-- Account details card-->
+                <div class="card mb-4">
+                    <div class="card-header">Account Details</div>
+                    <div class="card-body">
+
+                        <!-- Form Group (username)-->
+                        <div class="mb-3">
+                            <label class="small mb-1" asp-for="Username">Username</label>
+                            <input class="form-control" id="inputUsername" asp-for="Username" type="text" value=@this.Model.Username readonly>
+                        </div>
+
+                        <!-- Form Row-->
+                        <div class="row gx-3 mb-3">
+                            <!-- Form Group (first name)-->
+                            <div class="col-md-6">
+                                <label class="small mb-1" asp-for="FirstName">First name</label>
+                                <input class="form-control" id="inputFirstName" asp-for="FirstName" type="text" placeholder="Enter your first name" value=@this.Model.FirstName>
+                                <span asp-validation-for="FirstName" class="text-danger"></span>
+                            </div>
+                            <!-- Form Group (last name)-->
+                            <div class="col-md-6">
+                                <label class="small mb-1" asp-for="LastName">Last name</label>
+                                <input class="form-control" id="inputLastName" asp-for="LastName" type="text" placeholder="Enter your last name" value=@this.Model.LastName>
+                                <span asp-validation-for="LastName" class="text-danger"></span>
+                            </div>
+                        </div>
+                        <!-- Form Group (email address)-->
+                        <div class="mb-3">
+                            <label class="small mb-1" asp-for="Email">Email address</label>
+                            <input class="form-control" id="inputEmailAddress" asp-for="Email" type="email" placeholder="Enter your email address" value=@this.Model.Email>
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        @if (this.authManager.CurrentUser.Username == this.Model.Username)
+                        {
+                            <!-- Form Group (password)-->
+                            <div class="mb-3">
+                                <label class="small mb-1" asp-for="Password">New Password</label>
+                                <input class="form-control" onkeydown="enableConfrimPassword()" id="inputPassword" asp-for="Password" type="password" placeholder="Enter your new password">
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+
+                            <!-- Form Group (confirm passoword)-->
+                            <div class="mb-3">
+                                <label class="small mb-1" asp-for="ConfirmPassword">Confirm Password</label>
+                                <input class="form-control" id="inputConfirmPassword" asp-for="ConfirmPassword" type="password" placeholder="Confirm your new password" disabled>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        }
+
+                        @if (this.authManager.CurrentUser.Role.Name == "Admin")
+                        {
+                            <!-- Form Row-->
+                            <div class="row gx-3 mb-3">
+                                <!-- Form Group (role)-->
+                                <div class="col-md-6">
+                                    <label class="small mb-1" asp-for="Role">Role</label>
+                                    <br />
+                                    <select onchange="otherSelect()" asp-items="@roles" asp-for="Role" class="form-control" id="select" placeholder="Select role" value=@this.Model.Role></select>
+                                    <span asp-validation-for="Role" class="form-error"></span>
+                                </div>
+                                <!-- Form Group (block status)-->
+                                <div class="form-check m-auto">
+                                    <input class="form-check-input" type="radio" id="blockUser" asp-for="IsBlocked" value="true">
+                                    <label class="form-check-label text-danger" for="blockUser">Blocked</label><br>
+                                    <input class="form-check-input" type="radio" id="unblockUser" asp-for="IsBlocked" value="false">
+                                    <label class="form-check-label text-primary" for="unblockUser">Unblocked</label><br>
+                                </div>
+                            </div>
+                        }
+
+                        <!-- Form Group (phone number)-->
+                        <div class="mb-3" style="display: @displayPhone" id="phoneNumber">
+                            <label class="small mb-1" asp-for="PhoneNumber">Phone number</label>
+                            <input class="form-control" id="inputPhone" asp-for="PhoneNumber" type="tel" placeholder="Enter phone number" value=@this.Model.PhoneNumber>
+                        </div>
+
+                        <script type="text/javascript">
+                            function otherSelect() {
+                                var phone = document.getElementById("phoneNumber");
+                                var phoneNum = document.getElementById("inputPhone");
+                                if (document.forms[0].Role.options[document.forms[0].Role.selectedIndex].value == "Admin") {
+                                    phone.style.display = "block";
+                                }
+                                else {
+                                    phone.style.display = "none";
+                                    phoneNum.value = null;
+                                }
+                            }
+
+                            function enableConfrimPassword() {
+                                document.getElementById("inputConfirmPassword").disabled = false;
+                            }
+                        </script>
+
+
+
+                        <!-- Save changes button-->
+                        @*<button class="btn btn-primary" type="button">Save changes</button>*@
+                        <input type="submit" name="savesubmit" value="Save changes" class="btn btn-block btn-outline-success">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+    // Add the following code if you want the name of the file appear on select
+    $(".custom-file-input").on("change", function () {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+</script>
+

@@ -1,0 +1,157 @@
+﻿@{
+    this.ViewData["Title"] = "Details";
+}
+@inject IAuthManager authManager
+@model User
+
+@{  
+    var posts = this.Model.Posts;
+    var comments = this.Model.Comments;
+
+    string blockStatus = null;
+    if (this.Model.IsBlocked == true)
+    {
+        blockStatus = "Blocked";
+    }
+    else
+    {
+        blockStatus = "Unblocked";
+    }
+}
+
+<div class="row">
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                @if (this.Model.ProfilePicture != null)
+                {
+                    <img src="~/images/@this.Model.ProfilePicture" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
+                }
+                else
+                {
+                    <img src="~/images/user_default_logo.jpg" alt="avatar" class="rounded-circle img-fluid" style="width: 150px;">
+                }
+                <h5 class="my-2">@this.Model.FirstName @this.Model.LastName</h5>
+                <p class="text-muted m-md-2">@this.Model.Email</p>
+                <div class="d-flex justify-content-center mb-2">
+                    @if (this.authManager.CurrentUser.Id == this.Model.Id || this.authManager.CurrentUser.Role.Name == "Admin")
+                    {
+                        <a asp-controller="Users" asp-action="Edit" asp-route-id="@this.Model.Id" type="button" class="btn btn-primary mr-1">Edit</a>
+                        <button type="button" class="btn btn-danger ml-1" data-toggle="modal" data-target="#myModal">Delete</button>
+                    }
+                    <!-- The Modal -->
+                    <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 class="modal-title" id="myModalLabel">Delete Confirmation</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <!-- Modal body -->
+                                <div class="modal-body text-center mb-5">
+                                    <img src="~/images/right.png" class="img-responsive">
+                                    <h1>Are You Sure?</h1>
+                                    <p>Do you really want to delete user: <b style="font-size: 17px">@this.Model.Username</b>? This process cannot be undone.</p>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-secondary btn-lg mr-2 rounded-lg" data-dismiss="modal">Cancel</button>
+                                        <form asp-controller="Users" asp-action="Delete" asp-route-id="@this.Model.Id" method="post">
+                                            <input type="submit" value="Delete" class="btn btn-lg btn-danger" />
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <a asp-controller="Posts" asp-action="Index" asp-route-filter="Username" asp-route-search="@this.Model.Username" type="button" class="btn btn-dark btn-lg btn-block">Posts</a>
+                <a asp-controller="Posts" asp-action="IndexComments" asp-route-id=@this.Model.Id type="button" class="btn btn-warning btn-lg btn-block">Comments</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Username: </p>
+                    </div>
+                    <div class="col-sm-9">
+                        <p class="text-muted mb-0">@this.Model.Username</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">First Name: </p>
+                    </div>
+                    <div class="col-sm-9">
+                        <p class="text-muted mb-0">@this.Model.FirstName</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Last Name: </p>
+                    </div>
+                    <div class="col-sm-9">
+                        <p class="text-muted mb-0">@this.Model.LastName</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Email: </p>
+                    </div>
+                    <div class="col-sm-9">
+                        <p class="text-muted mb-0">@this.Model.Email</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Role: </p>
+                    </div>
+                    <div class="col-sm-9">
+                        <p class="text-muted mb-0">@this.Model.Role.Name</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Status: </p>
+                    </div>
+                    <div class="col-sm-9">
+                        <p class="text-muted mb-0">@blockStatus</p>
+                    </div>
+                </div>
+                @if (this.Model.Role.Name == "Admin")
+                {
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <p class="mb-0">Phone number: </p>
+                        </div>
+                        @if (this.Model.PhoneNumber != null)
+                        {
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">@this.Model.PhoneNumber.Number</p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-sm-9">
+                                <p class="text-muted mb-0">None</p>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+

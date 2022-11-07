@@ -1,0 +1,117 @@
+﻿using ForumSystem.Exceptions;
+using ForumSystem.Helpers.Contracts;
+using ForumSystem.Models;
+using ForumSystem.Models.DTO;
+using ForumSystem.Repositories.Contracts;
+using ForumSystem.Services.Contracts;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace ForumSystem.Tests.ServicesTests.UsersServiceTests.UserPostReactionsTests
+{
+    [TestClass]
+    public class UpdateUserPostSpecificReaction_Should
+    {
+        [TestMethod]
+        public void UpdateReaction_When_ParamsAreValid()
+        {
+            // Arrange
+            var user = TestUserHelper.GetTestDefaultUser();
+            var post = TestUserHelper.GetTestPost();
+            var expectedPostReaction = TestUserHelper.GetTestPostReaction();
+
+            var postReactionDto = new PostReactionDto
+            {
+                Id = expectedPostReaction.Id,
+                Reaction = expectedPostReaction.Reaction.ToString()
+            };
+
+            post.UserId = user.Id;
+            post.User = user;
+            expectedPostReaction.PostId = post.Id;
+            expectedPostReaction.Post = post;
+            expectedPostReaction.User = user;
+            expectedPostReaction.UserId = user.Id;
+
+            var expectedPostReactions = new List<PostReaction>() { expectedPostReaction };
+            var posts = new List<Post>() { post };
+            post.Reactions = expectedPostReactions;
+
+            var repoUsersMock = new Mock<IUsersRepository>();
+            repoUsersMock.Setup(repo => repo.GetById(user.Id))
+                            .Returns(user);
+            var repoPostMock = new Mock<IPostsRepository>();
+            repoPostMock.Setup(repo => repo.GetAll())
+                            .Returns(posts);
+            repoPostMock.Setup(repo => repo.GetById(post.Id))
+                            .Returns(post);
+            var modelMapperMock = new Mock<IModelMapper>();
+            modelMapperMock.Setup(mapper => mapper.MapPostReactionCreate(post.Id, user, postReactionDto))
+                            .Returns(expectedPostReaction);
+            var servicePostMock = new Mock<IPostsService>();
+            servicePostMock.Setup(service => service.UpdatePostReaction(post.Id, user.Username, expectedPostReaction))
+                            .Returns(postReactionDto);
+
+            var sut = TestUserHelper.InitializeUsersService(repoUsersMock, repoPostMock, servicePostMock, modelMapperMock);
+
+            // Act
+            var actualPostReaction = sut.UpdateUserPostSpecificReaction(user.Id, post.Id, expectedPostReaction.Id, postReactionDto, user);
+
+            // Assert
+            Assert.AreEqual(expectedPostReaction.Id, actualPostReaction.Id);
+            Assert.AreEqual(expectedPostReaction.Reaction.ToString(), actualPostReaction.Reaction);
+            Assert.AreEqual(expectedPostReaction.User.Username, actualPostReaction.Author);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(UnauthorizedOperationException))]
+        public void ThrowUnauthorizedOperationException_When_ParamsAreInvalid()
+        {
+            // Arrange
+            var user = TestUserHelper.GetTestDefaultUser();
+            var post = TestUserHelper.GetTestPost();
+            var expectedPostReaction = TestUserHelper.GetTestPostReaction();
+            var anotherUser = TestUserHelper.GetTestAdminUser();
+
+            var postReactionDto = new PostReactionDto
+            {
+                Id = expectedPostReaction.Id,
+                Reaction = expectedPostReaction.Reaction.ToString()
+            };
+
+            post.UserId = user.Id;
+            post.User = user;
+            expectedPostReaction.PostId = post.Id;
+            expectedPostReaction.Post = post;
+            expectedPostReaction.User = user;
+            expectedPostReaction.UserId = user.Id;
+
+            var expectedPostReactions = new List<PostReaction>() { expectedPostReaction };
+            var posts = new List<Post>() { post };
+            post.Reactions = expectedPostReactions;
+
+            var repoUsersMock = new Mock<IUsersRepository>();
+            repoUsersMock.Setup(repo => repo.GetById(user.Id))
+                            .Returns(user);
+            var repoPostMock = new Mock<IPostsRepository>();
+            repoPostMock.Setup(repo => repo.GetAll())
+                            .Returns(posts);
+            repoPostMock.Setup(repo => repo.GetById(post.Id))
+                            .Returns(post);
+            var modelMapperMock = new Mock<IModelMapper>();
+            modelMapperMock.Setup(mapper => mapper.MapPostReactionCreate(post.Id, user, postReactionDto))
+                            .Returns(expectedPostReaction);
+            var servicePostMock = new Mock<IPostsService>();
+            servicePostMock.Setup(service => service.UpdatePostReaction(post.Id, user.Username, expectedPostReaction))
+                            .Returns(postReactionDto);
+
+            var sut = TestUserHelper.InitializeUsersService(repoUsersMock, repoPostMock, servicePostMock, modelMapperMock);
+
+            // Act
+            var actualPostReaction = sut.UpdateUserPostSpecificReaction(user.Id, post.Id, expectedPostReaction.Id, postReactionDto, anotherUser);
+        }
+    }
+}
