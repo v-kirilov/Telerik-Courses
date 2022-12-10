@@ -94,7 +94,7 @@ The system calculates the number of rounds are required and randomly creates mat
 http://localhost:5000/api/swagger/index.html
 
 # Image of the database relations
-https://github.com/v-kirilov/images/issues/1#issue-1488385248
+![database-diagram-1](https://user-images.githubusercontent.com/102161443/206851954-9e7259ef-cfb5-43bb-aff4-8cb6dcc0dc9f.png)
 
 
 
