@@ -1,0 +1,30 @@
+﻿@{
+    if (this.Context.Response.StatusCode.Equals(404)){
+        <div class="alert alert-success" role="alert">
+             <p>Oops...something went wrong :(.  @this.ViewData["ErrorMessage"]</p>
+             <p>Status Code: @this.Context.Response.StatusCode</p>
+        </div>
+        <div class="container">
+            <img src="~/img/error_404.jpg" class="img-fluid" alt="Responsive image" />
+        </div>
+    }
+    else if (this.Context.Response.StatusCode.Equals(401)){
+      <div class="alert alert-danger" role="alert">
+             <p>Oops...something went wrong :(.  @this.ViewData["ErrorMessage"]</p>
+             <p>Status Code: @this.Context.Response.StatusCode</p>
+        </div>
+        <div class="container">
+            <img src="~/img/error_401.jpg" class="img-fluid" alt="Responsive image" />
+        </div>
+    }else if (this.Context.Response.StatusCode.Equals(403)){
+      <div class="alert alert-danger" role="alert">
+             <p>Oops...something went wrong :(.  @this.ViewData["ErrorMessage"]</p>
+             <p>Status Code: @this.Context.Response.StatusCode</p>
+      </div>
+
+      <div class="container">
+           <img src="~/img/error_403.jpg" class="img-fluid" alt="Responsive image" />
+      </div>
+    }
+}
+

@@ -1,0 +1,61 @@
+﻿@{
+    ViewData["Title"] = "Register";
+}
+
+@model RegisterViewModel
+    <link rel="stylesheet" href="~/css/account.css" />
+<!-- Section: Design Block -->
+<section class="text-center text-lg-start">
+    <!-- Jumbotron -->
+    <div class="container py-4">
+        <div class="row g-0 align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="card cascading-right" style="
+            background: hsla(0, 0%, 100%, 0.55);
+            backdrop-filter: blur(30px);
+            ">
+                    <div class="card-body p-5 shadow-5 text-center">
+                        <h2 class="fw-bold mb-5">Sign Up</h2>
+                        <form asp-controller="Users" asp-action="Register" method="post" id="singnupFrom">
+                            <!-- Email input -->
+                            <div class="form-outline mb-4">
+                                <label class="font-weight-bold" asp-for="Email">Email<span class="text-danger">*</span></label>
+                                <input type="email" asp-for="Email" class="form-control" required placeholder="Enter valid email" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <!-- Password input -->
+                            <div class="form-outline mb-4">
+                                <label class="font-weight-bold" asp-for="Password">Password<span class="text-danger">*</span></label>
+                                <input type="password" asp-for="Password" class="form-control" placeholder="***********" required>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                            <div class="form-outline mb-4">
+                                <label class="font-weight-bold" asp-for="ConfirmPassword">Confirm Password<span class="text-danger">*</span></label>
+                                <input type="password" asp-for="ConfirmPassword" class="form-control" placeholder="***********" required>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+
+                            <!-- Submit button -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" name="signupsubmit" value="Register" class="btn btn-danger btn-block mb-4">
+                                    Sign up
+                                </button>
+                            </div>
+
+                            <p>Have already an account? <a asp-controller="Users" asp-action="Login">Sign In</a></p>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <img style ="width: 75%" src="https://images.unsplash.com/photo-1586200486113-6102191cb3b2?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=387&q=80" class="rounded-4 shadow-4"
+                     alt="" />
+            </div>
+        </div>
+    </div>
+    <!-- Jumbotron -->
+</section>
+<!-- Section: Design Block -->

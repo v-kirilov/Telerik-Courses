@@ -1,0 +1,77 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model EditUserViewModel
+@inject IAuthManager authManager
+@inject IRolesService rolesService
+<h2 style="text-align:center" class="mt-3 text-white">Edit my profile</h2>
+<form asp-controller="Users" asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div class="container-xl px-4 mt-4">
+            <div  class="container" id="form" style="width:650px">
+                <!-- Account details card-->
+                <div class="container text-white">
+                    <div class="card-header " style="text-align:center">Account Details</div>
+                    <div class="card-body">
+                        <!-- Form Group (username)-->
+                        <div class="mb-3">
+                            <label class="small mb-1" asp-for="Email">Email</label>
+                            <input class="form-control" id="inputEmail" asp-for="Email" type="email" value=@this.Model.Email readonly>
+                        </div>
+                        @if (this.authManager.CurrentUser.Id == this.Model.Id)
+                        {
+                            <!-- Form Group (password)-->
+                            <div class="mb-3">
+                                <label class="small mb-1" asp-for="Password">New Password</label>
+                                <input class="form-control" onkeydown="enableConfrimPassword()" id="inputPassword" asp-for="Password" type="password" placeholder="Enter your new password">
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+
+                            <!-- Form Group (confirm passoword)-->
+                            <div class="mb-3">
+                                <label class="small mb-1" asp-for="ConfirmPassword">Confirm Password</label>
+                                <input class="form-control" id="inputConfirmPassword" asp-for="ConfirmPassword" type="password" placeholder="Confirm your new password" disabled>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        }
+
+                        <script type="text/javascript">
+                            function otherSelect() {
+                                var phone = document.getElementById("phoneNumber");
+                                var phoneNum = document.getElementById("inputPhone");
+                                if (document.forms[0].Role.options[document.forms[0].Role.selectedIndex].value == "Admin") {
+                                    phone.style.display = "block";
+                                }
+                                else {
+                                    phone.style.display = "none";
+                                    phoneNum.value = null;
+                                }
+                            }
+
+                            function enableConfrimPassword() {
+                                document.getElementById("inputConfirmPassword").disabled = false;
+                            }
+                        </script>
+
+                        <!-- Save changes button-->
+                        <input type="submit" name="savesubmit" value="Save changes" class="btn btn-block btn-outline-warning">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+</form>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+    // Add the following code if you want the name of the file appear on select
+    $(".custom-file-input").on("change", function () {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+</script>
+<style>
+    #form{
+        background-color:#6c757d54;
+    }
+</style>

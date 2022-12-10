@@ -1,0 +1,335 @@
+﻿@model PaginatedList<MatchDto>
+@inject IAuthManager authManager
+@inject IUsersService usersService
+@inject IPlayersService playersService
+@inject IPhotoService photoService
+@inject ITournamentsService tournamentsService
+@{
+    var user = this.authManager.CurrentUser;
+
+    int counterScore1 = 0;
+
+    string prevButtonState = !this.Model.HasPrevPage ? "disabled" : "";
+    string nextButtonState = !this.Model.HasNextPage ? "disabled" : "";
+
+}
+<div class="container-fluid">
+    
+<!-- Breadcrumb Section Begin -->
+<section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb-bg.jpg">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="bs-text">
+                    <h2>Our Matches</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Breadcrumb Section End -->
+<nav class="navbar navbar-light bg-dark">
+        <form asp-controller="Matches" asp-action="Index" class="form-inline" method="get">
+            <p class="p-2">
+                <label for="select" class="text-white">Select filter</label>
+                <select id="select" name="filter">
+                    <option value="">Choose...</option>
+                    <optgroup label="Filter By">
+                        <option value="Participant">Player</option>
+                        <option value="Format">Format</option>
+                        <option value="Tournament">Tournament</option>
+                        <option value="Director">Director</option>
+                    </optgroup>
+                </select>
+            </p>
+            <input class="form-control mr-sm-2 p-2" name="search" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Search</button>
+            <span class="navbar-text p-2 text-muted">Search by Player, Format, Tournament or Director email!</span>
+            <p class="p-2">
+                <label for="select" class="text-white">Select Sorting</label>
+                <select id="select" name="sort">
+                    <option value="">Choose...</option>
+                    <optgroup label="Sort By">
+                        <option value="Date">Date</option>
+                        <option value="Format">Format</option>
+                        <option value="Tournament">Tournament</option>
+                        <option value="Email">Email</option>
+                    </optgroup>
+                </select>
+            </p>
+            <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Sort</button>
+        </form>
+        <br />
+        <hr />
+    </nav>
+</div>
+<!-- Results Section Begin -->
+<section class="schedule-section spad">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="schedule-text">
+                    <h4 class="st-title">@this.ViewData["Title"]</h4>
+                    <div class="st-table">
+                        <table>
+                            <tbody>
+                                @{
+                                    foreach (var match in this.Model)
+                                    {
+                                        var email = this.usersService.GetById(match.DirectorId).Email;
+                                        var player1 = this.playersService.GetByFullName(match.Players[0]);
+                                        var player2 = this.playersService.GetByFullName(match.Players[1]);
+                                            <tr>
+                                                        <td class="left-team">
+                                                            <img src="@photoService.GetPhotoUrl(player1.Id)" style="width:100px; height:100px" alt="">
+                                                            <a asp-controller="Players" asp-action="Details" asp-route-id="@player1.Id" class="btn-change"><h4>@match.Players[0]</h4></a>
+                                        <br>
+                                        @{
+                                            if (match.TournamentId != null)
+                                            {
+                                                var tournament = this.tournamentsService.GetById((int)match.TournamentId);
+                                                <a asp-controller="Tournaments" asp-action="Details" asp-route-id=@match.TournamentId class="btn-change"><h6>Tournament @tournament.Title</h6></a>
+                                            }
+                                        }
+                                                        </td>
+                                                        <td class="st-option">
+                                                            <div class="so-text"><h6>Director: @email</h6></div>
+                                                            <br />
+                                                            @{
+                                                   var dictNames = new Dictionary<string, string>
+                                                      {
+                                                      { "score1", "" },
+                                                      { "score2", "" }
+                                                      };
+
+                                                if (user != null && (user.Role.Name.Equals("Admin") || (user.Role.Name.Equals("Director") && (user.Id == @match.DirectorId))) && (@match.Status == "Current"))
+                                                {
+                                                    counterScore1++;
+
+                                                                            <form asp-controller="Matches" asp-action="Finish" asp-all-route-data="@dictNames" asp-route-id="@match.Id" method="get" id="Finish">
+                                                                                <div class="group-in">
+                                                                                    <input asp-for="@dictNames["score1"]" type="text" class="match-result" id="score1" value="0" style="width: 20px">
+                                                                                    <input asp-for="@dictNames["score2"]" type="text" class="match-result" id="score2" value="0" style="width: 20px">
+                                                                                </div>
+                                                                                <br>
+                                                                                @{
+                                                           if (@match.Format == "TimeLimited")
+                                                           {
+                                                                                                    <button type="button" id="btn(@counterScore1)" class="btn btn-warning" name="timer">Start</button>
+                                                                                                    <button class="btn btn-dark" id="btn(@counterScore1)-finish" type="submit" name="btn-finish">Finish</button>
+                                                           }
+                                                           else
+                                                           {
+                                                                                                    <button class="btn btn-dark" type="submit" onmouseover="validateScore(@counterScore1)">Finish</button>
+                                                                                                    <div class="popup" id="popup">
+                                                                                                    <img class="img-responsive" id="img-popup" src="/img/triangle-yellow.png">
+                                                                                                    <h3>Please update the score!</h3>
+                                                                                                    <p>The match is score limited. The result could not be draw!!!</p>
+                                                                                                    <button type="button" onclick="closePopup()">OK</button>
+                                                                                                </div>
+                                                           }
+                                                                                 }
+                                                                            </form>
+                                                                            <br>
+                                                                            <div id="btn(@counterScore1)-arrows" class="d-flex justify-content-around">
+                                                                                <button type="button" class="btn btn-secondary btn-sm" onclick="increment1(@counterScore1)" name="arrow">&#8593;</button>                                                           
+                                                                                <button type="button" class="btn btn-secondary btn-sm" onclick="decrement1(@counterScore1)" name="arrow">&#8595</button>                                                            
+                                                                                <button type="button" class="btn btn-secondary btn-sm" onclick="increment2(@counterScore1)" name="arrow">&#8593;</button>
+                                                                                <button type="button" class="btn btn-secondary btn-sm" onclick="decrement2(@counterScore1)" name="arrow">&#8595</button>
+                                                                            </div>
+                                                    }
+                                                    else
+                                                    {
+                                                                                <h2>@match.Score1 : @match.Score2</h2>
+                                                    }
+
+                                                                }
+                                                                <br />
+                                                                <div class="so-text"><h6>@match.Date.ToString("dd/MM/yyyy")</h6></div>
+                                                                <br />
+                                                                <div class="so-text"><h6>@match.Format.ToString()</h6></div>
+                                                        </td>
+                                                        <td class="right-team">
+                                                            <img src="@photoService.GetPhotoUrl(player2.Id)" style="width:100px; height:100px" alt="">
+                                                            <a asp-controller="Players" asp-action="Details" asp-route-id="@player2.Id" class="btn-change"><h4>@match.Players[1]</h4></a>
+                                        <br>
+                                        
+                                                        </td>
+                                                        <td class="st-option">
+                                                            <a asp-controller="Matches" asp-action="Details" asp-route-id="@match.Id" class="primary-btn">Details</a>
+                                                        </td>
+                                                    </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Results Section End -->
+<a asp-controller="Matches" asp-action="Index" asp-route-PageNumber="@(this.Model.PageNumber - 1)" class="btn btn-outline-warning my-2 my-sm-0 @prevButtonState">Prev. Page</a>
+<a class="text-white">Page @this.Model.PageNumber of @this.Model.TotalPages</a>
+<a asp-controller="Matches" asp-action="Index" asp-route-PageNumber="@(this.Model.PageNumber + 1)" class="btn btn-outline-warning my-2 my-sm-0 @nextButtonState">Next Page</a>
+<style>
+
+    #timerCountDown:disabled {
+        background: grey;
+        border: grey;
+    }
+    h2, h4, h6 {
+        font-weight: bold;
+        color: #e5e5e5;
+    }
+    .schedule-text .st-table table tbody tr td h4 {
+	line-height: 30px;
+	color: #e5e5e5;
+	font-weight: 500;
+}
+.popup {
+        width: 400px;
+        background: #fff;
+        border-radius: 6px;
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.1);
+        text-align: center;
+        padding: 0 30px 30px;
+        color: #333;
+        visibility: hidden;
+        transition: transform 0.4s, top 0.4s;
+    }
+    .open-popup{
+        visibility: visible;
+        top: 50%;
+        transform: translate(-50%, -50%) scale(1);
+    }
+    #img-popup{
+        width: 150px;
+        height: auto;
+        margin-top: -80px;
+    }
+    .popup h3{
+        font-size: 38px;
+        font-weight: 500;
+        margin: 30px 0 10px;    
+    }
+    .popup button{
+        width: 100%;
+        margin-top: 50px;
+        padding: 10px 0;
+        background: #ffb907;
+        color: black;
+        border: 0;
+        outline: none;
+        font-size: 18px;
+        border-radius: 4px;
+        cursor: pointer;
+        box-shadow: 0 5px 5px rgba(0, 0, 0, 0.2);
+    }
+
+</style>
+
+<script>
+    var scores = document.getElementsByClassName('match-result');
+    const finishButtons = document.getElementsByName('btn-finish');
+    for (let finish of finishButtons){
+        finish.disabled = true;
+    }
+
+    function startTimeCountDown(timerElement) {
+ 
+        let timer = 3;
+        const timeCountdown = setInterval(function () {
+            if (timer == 0) {
+                clearTimeout(timer);
+                timerElement.innerHTML = 'End';
+                document.getElementsByClassName('btn btn-dark disabled')[0]
+                let id = timerElement.getAttribute('id');
+                document.getElementById(`${id}-finish`).disabled = false;
+                let arrowsDiv = document.getElementById(`${id}-arrows`);
+                let arrows = arrowsDiv.children;
+                for (i = 0; i < 4; i++) {
+                    arrows[i].disabled = true;
+                }
+                
+                
+                    for (j = 0; j < scores.length; j++) {
+                    scores[i].disabled = true;
+                }
+            } else {
+                timerElement.disabled = true;
+                timerElement.innerHTML = timer + ' secs';
+                timer--;
+            } }, 1000);
+    }
+ 
+    var timerElements = document.getElementsByName("timer");
+ 
+    for (let timerElement of timerElements) {
+        timerElement.addEventListener('click', ev => {
+            startTimeCountDown(timerElement);
+        });
+    }
+
+
+
+
+    function increment1(count) {
+        var index = count * 2 - 2;
+        var score = document.getElementsByClassName('match-result')[index].value;
+        score++;
+        document.getElementsByClassName('match-result')[index].value = score;
+    }
+
+    function decrement1(count) {
+        var index = count * 2 - 2;
+        var score = document.getElementsByClassName('match-result')[index].value;
+        if (score > 0) {
+            score--;
+        }
+        document.getElementsByClassName('match-result')[index].value = score;
+    }
+
+    function increment2(count) {
+        var index = count * 2 - 1;
+        var score = document.getElementsByClassName('match-result')[index].value;
+        score++;
+        document.getElementsByClassName('match-result')[index].value = score;
+    }
+
+    function decrement2(count) {
+        var index = count * 2 - 1;
+        var score = document.getElementsByClassName('match-result')[index].value;
+        if (score > 0) {
+            score--;
+        }
+        document.getElementsByClassName('match-result')[index].value = score;
+    }
+
+    function validateScore(count) {
+        var index1 = count * 2 - 2;
+        var index2 = count * 2 - 1;
+        var input1 = document.getElementsByClassName('match-result')[index1].value;
+        var input2 = document.getElementsByClassName('match-result')[index2].value;
+        if (input1 == input2) {
+             openPopup();
+        }
+    }
+
+    function openPopup() {
+    let popup = document.getElementById("popup");
+    popup.classList.add("open-popup");
+    }
+    function closePopup() {
+        let popup = document.getElementById("popup");
+        popup.classList.remove("open-popup");
+    }
+
+</script>
+
+
+

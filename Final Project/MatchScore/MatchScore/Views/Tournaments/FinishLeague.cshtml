@@ -1,0 +1,90 @@
+﻿@model TournamentDto
+@inject IPlayersService playersService
+@inject IPhotoService photoService
+
+@{
+	ViewData["Title"] = "Standings";
+	int counter = 1;
+	var matchesPlayed = this.Model.Standings.Count - 1;
+	var standings = new List<Standing>(this.Model.Standings);
+	standings = standings.OrderByDescending(points => points.Points).ThenByDescending(x => x.Goals).ToList();
+	var winner = this.playersService.GetByFullName(standings[0].PlayerName);
+}
+
+<body>
+
+	<section class="hero-section set-bg mb-4" data-setbg="/img/hero-1.jpg" style="background-image: url(&quot;/img/hero-2.jpg&quot;);">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="hs-item">
+						<div class="container">
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="hs-text">
+										<h1 class="text-warning mb-3">@this.Model.Title</h1>
+										<h2 class="text-warning">Winner:</h2>
+										<a asp-controller="Players" asp-action="Details" asp-route-id="@winner.Id" class="btn-change"><h2 class="text-warning">@winner.FullName</h2></a>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+
+	<div class="container">
+
+
+		<div class="col-lg-auto">
+			<div class="section-title">
+				<h3 class="text-white">Player <span class="text-white">Ranking</span></h3>
+			</div>
+			<div class="points-table">
+				<table>
+					@*<thead>
+						<tr>
+							<th class="th-o text-white">Position</th>
+							<th>Player</th>
+							<th class="th-o text-white">Matches Played</th>
+							<th class="th-o text-white">Scored Goals</th>
+							<th class="th-o text-white">PTS</th>
+						</tr>
+					</thead>*@
+					<tbody>
+						<tr>
+							<td class="th-o text-white">Position</td>
+							<td class="th-o text-white">Player</td>
+							<td class="th-o text-white">Matches Played</td>
+							<td class="th-o text-white">Scored Goals</td>
+							<td class="th-o text-white">PTS</td>
+						</tr>
+						@foreach (var standing in standings)
+						{
+							var player = this.playersService.GetByFullName(standing.PlayerName);
+							<tr>
+								<td class="text-white">@counter</td>
+								<td class="team-name">
+									<img src="@photoService.GetPhotoUrl(player.Id)" style="width:50px; height:50px" alt="">
+									<span class="text-white">@standing.PlayerName</span>
+								</td>
+								<td class="text-white">@matchesPlayed</td>
+								<td class="text-white">@standing.Goals</td>
+								<td class="text-white">@standing.Points</td>
+							</tr>
+							counter++;
+						}
+
+
+					</tbody>
+				</table>
+				<a href="#" style="background-color:#2d2d2d" class="p-all text-white">Final standings</a>
+			</div>
+		</div>
+	</div>
+
+</body>

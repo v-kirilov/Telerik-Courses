@@ -1,0 +1,52 @@
+﻿@model PaginatedList<PlayerDto>
+@{
+    int counter = 1;
+}
+<h2 style="text-align:center" class="mt-3 mb-3 text-white">Players Ranking</h2>
+<table class="table table-striped text-white" style="width: 50%" align="center">
+    <thead>
+        <tr>
+            <th scope="col">Position</th>
+            <th scope="col">Player Full Name</th>
+            <th scope="col">Sport Club</th>
+            <th>Country</th>
+            <th scope="col">P</th>
+            <th scope="col">W</th>
+            <th scope="col">L</th>
+            <th scope="col">D</th>
+        </tr>
+    </thead>
+    <tbody>
+
+        @foreach (var player in this.Model.OrderByDescending(p => p.MatchesWon).ThenBy(p => p.MatchesLost).ThenByDescending(p=>p.MatchesDraw))
+        {
+            <tr>
+                <td>@counter</td>
+                <td>
+                    <a asp-controller="Players" asp-action="Details" asp-route-id=@player.Id>
+                    <img src="@player.PhotoUrl" style="width:50px;" alt="">
+                    @player.FullName</a>
+                </td>
+                <td>@player.SportClub</td>
+                <td>@player.Country</td>
+                <td>@player.MatchesPlayed</td>
+                <td>@player.MatchesWon</td>
+                <td>@player.MatchesLost</td>
+                <td>@player.MatchesDraw</td>
+            </tr>
+            counter++;
+        }
+
+    </tbody>
+</table>
+<style>
+
+    .table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
+        background-color: #dd151540;
+    }
+
+    a:hover {
+        font-size: 1.2rem;
+        font:bold;
+    }
+</style>

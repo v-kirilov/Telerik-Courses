@@ -1,0 +1,175 @@
+﻿@{
+    this.ViewData["Title"] = "Details";
+}
+@inject IAuthManager authManager
+@inject IPlayersService playersService
+@model UserDto
+
+@{
+    bool HasUserWaitingRequests()
+    {
+        bool? result = this.authManager.CurrentUser?.Requests?.Any(r => r.Status.ToString() == "Waiting");
+
+        if (result == null || result == true)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    string requestButtonState = HasUserWaitingRequests() ? "disabled" : "";
+    string pointerEvents = HasUserWaitingRequests() ? "none" : "";
+}
+<h2 style="text-align:center" class="mt-3 mb-3 text-white">User details</h2>
+<div class="row text-white">
+    <div class="col-lg-4">
+        <div class="card mb-4">
+            <div class="card-body text-center">
+                <h3 class="mb-3">User:</h3>
+                <h3 class="my-2 mb-5"><b>@this.Model.Email</b></h3>
+                <div class="d-flex justify-content-center mb-2">
+                    @if (this.authManager.CurrentUser.Id == this.Model.Id)
+                    {
+                        <a asp-controller="Users" asp-action="Edit" asp-route-id="@this.Model.Id" type="button" class="btn btn-primary mr-1">Edit</a>
+                    }
+                    @if(this.authManager.CurrentUser.Role.Name == "Admin" && (this.Model.Role != "Director" && this.Model.Role != "Admin"))
+                    {
+                        <button type="button" class="btn btn-danger ml-1" data-toggle="modal" data-target="#myModal">Delete</button>
+                    }
+                    <!-- The Modal -->
+                    <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- Modal Header -->
+                                <div class="modal-header">
+                                    <h4 style="color:black" class="modal-title" id="myModalLabel">Delete Confirmation</h4>
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                </div>
+                                <!-- Modal body -->
+                                <div class="modal-body text-center mb-5">
+                                    <img src="~/img/warning-sign.png" style="width: 150px;" class="img-responsive">
+                                    <h2 style="color:black">Are You Sure?</h2>
+                                    <p style="color:black">Do you really want to delete user: <b style="font-size: 17px">@this.Model.Email</b>? This process cannot be undone.</p>
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-secondary btn-lg mr-2 rounded-lg" data-dismiss="modal">Cancel</button>
+                                        <form asp-controller="Users" asp-action="Delete" asp-route-id="@this.Model.Id" method="post">
+                                            <input type="submit" value="Delete" class="btn btn-lg btn-danger" />
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                @if(this.Model.Role == "Admin" || this.Model.Role == "Director")
+                {
+                    @if(this.Model.Tournaments.Count > 0)
+                    {
+                                            <a asp-controller="Tournaments" asp-action="Index" asp-route-filter="Email" asp-route-search=@this.Model.Email type="button" class="btn btn-dark btn-lg btn-block">Tournaments</a>
+                    }
+                    @if(this.Model.Matches.Count > 0)
+                    {
+                                            <a asp-controller="Matches" asp-action="Index" asp-route-filter="Director" asp-route-search=@this.Model.Email type="button" class="btn btn-warning text-dark btn-lg btn-block">Matches</a>
+                    }
+                }
+                @if(this.Model.Role == "Verified")
+                {
+                    var player = this.playersService.GetByFullName(this.Model.PlayerFullName);
+                    <a asp-controller="Players" asp-action="Details" asp-route-id=@player.Id type="button" class="btn btn-dark btn-lg btn-block">Associated Player</a>
+                }
+                @if(this.Model.Role == "Verified" && this.authManager.CurrentUser.Role.Name == "Admin")
+                {
+                    <button type="button" class="btn btn-warning text-dark btn-lg btn-block" data-toggle="modal" data-target="#myRemovePlayerModal">Remove associated player</button>
+                }
+                <div class="modal fade" id="myRemovePlayerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 style="color:black" class="modal-title" id="myModalLabel">Remove Confirmation</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            </div>
+                                            <div class="modal-body text-center mb-5">
+                                                <img src="~/img/warning-sign.png" style="width: 150px;" class="img-responsive">
+                                                <h2 style="color:black">Are You Sure?</h2>
+                                                <p style="color:black">Do you really want to remove associated player:<b style="font-size: 17px">@this.Model.PlayerFullName</b> from user:<b style="font-size: 17px">@this.Model.Email</b>? </p>
+                                                <div class="btn-group">
+                                                    <a asp-controller="Users" asp-action="RemoveAssociatedPlayer" asp-route-id=@this.Model.Id  type="button" class="btn btn-success btn-lg btn-block mr-2 @requestButtonState">Submit</a>
+                                                <button type="button" class="btn btn-danger btn-lg rounded-lg" data-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                @if(this.Model.Role == "Default" && this.authManager.CurrentUser.Id == this.Model.Id)
+                {
+                    <button type="button" style="pointer-events: @pointerEvents" class="btn btn-warning text-dark btn-lg btn-block @requestButtonState" data-toggle="modal" data-target="#myRequestModal">Promote To Director Request</button>
+                }
+                <div class="modal fade" id="myRequestModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 style="color:black" class="modal-title" id="myModalLabel">Request Confirmation</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            </div>
+                                            <div class="modal-body text-center mb-5">
+                                                <img src="~/img/icon-confirm.png" style="width: 150px;" class="img-responsive">
+                                                <h2 style="color:black">Are You Sure?</h2>
+                                                <p style="color:black">Do you really want to send a <b style="font-size: 17px">promote to director request</b>? </p>
+                                                <div class="btn-group">
+                                                    <a asp-controller="Requests" asp-action="CreateDirectorRequest" asp-route-type="PromoteToDirector"  type="button" class="btn btn-success btn-lg btn-block mr-2 @requestButtonState">Submit</a>
+                                                <button type="button" class="btn btn-danger btn-lg rounded-lg" data-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-8">
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Email: </p>
+                    </div>
+                    <div class="col-sm-9">
+                        <p class="text mb-0">@this.Model.Email</p>
+                    </div>
+                </div>
+                <hr>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Role: </p>
+                    </div>
+                    <div class="col-sm-9">
+                        <p class="text mb-0">@this.Model.Role</p>
+                    </div>
+                </div>
+                @if(this.Model.Role == "Verified")
+                {
+                    <hr>
+                    <div class="row">
+                    <div class="col-sm-3">
+                        <p class="mb-0">Associated Player: </p>
+                    </div>
+                    <div class="col-sm-9">
+                        <p class="text mb-0">@this.Model.PlayerFullName</p>
+                    </div>
+                </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<style>
+    .card-body{
+        background-color:#151618c2;
+    }
+</style>
+

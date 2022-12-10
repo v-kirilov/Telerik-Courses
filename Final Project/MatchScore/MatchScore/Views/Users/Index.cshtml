@@ -1,0 +1,145 @@
+﻿@{
+    this.ViewData["Title"] = "Users";
+
+    string roleColor = null;
+}
+
+@model PaginatedList<UserDto>
+@inject IAuthManager authManager
+
+<body>
+    <section class="breadcrumb-section set-bg" data-setbg="/img/hero-2.jpg">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="bs-text">
+                        <h2>Users</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <nav class="navbar navbar-light bg-dark text-white">
+        <form asp-controller="Users" asp-action="Index" class="form-inline" method="get">
+
+            <p class="p-2">
+                <label for="select">Search by</label>
+                <select id="select" name="filter">
+                    <option value="">Choose...</option>
+                    <optgroup label="Options:">
+                        <option value="Email">Email</option>
+                        <option value="Role">Role</option>
+                    </optgroup>
+
+                </select>
+            </p>
+            <input class="form-control mr-sm-2 p-2" name="search" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-warning my-2 my-sm-0 mr-5" type="submit">Search</button>
+
+            <p class="p-2 ml-5">
+					<label for="select">Sort by</label>
+					<select id="select" name="sort">
+						<option value="">Choose...</option>
+						<optgroup label="Options:">
+							<option value="Email">Email</option>
+							<option value="Role">Role</option>
+						</optgroup>
+					</select>
+				</p>
+
+				<button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Sort</button>
+
+        </form>
+    </nav>
+
+    @if (this.Model.Count() <= 0)
+    {
+        <p>
+            <h3 align="center">No users found 😔</h3>
+        </p>
+    }
+    else
+    {
+        <table class="table table-striped text-white">
+            <thead>
+                <tr>
+                    <th scope="col"><b>Email</b></th>
+                    <th scope="col"><b>Role</b></th>
+                    <th scope="col"><b>Options</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in this.Model)
+                {
+                    var tm = "#myModal" + user.Id;
+                    var mid = "myModal" + user.Id;
+
+                    <tr>
+                        <td>@user.Email</td>
+                        <td class="@roleColor">@user.Role</td>
+                        <td>
+                            <a asp-controller="Users" asp-action="Details" asp-route-id="@user.Id" class="btn btn-dark">Details</a>
+                            @if (this.authManager.CurrentUser.Id == user.Id)
+                            {
+                                <a asp-controller="Users" asp-action="Edit" asp-route-id="@user.Id" class="btn btn-primary">Edit</a>
+                            }
+                            @if (this.authManager.CurrentUser.Role.Name == "Admin" && (user.Role != "Director" && user.Role != "Admin"))
+                            {
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="@tm">
+                                    Delete
+                                </button>
+                                <div class="modal fade" id="@mid" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="myModalLabel">Delete Confirmation</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            </div>
+                                            <div class="modal-body text-center mb-5">
+                                                <img src="~/img/warning-sign.png" style="width: 150px;" class="img-responsive">
+                                                <h2 style="color:black">Are You Sure?</h2>
+                                                <p style="color:black">Do you really want to delete user: <b style="font-size: 17px">@user.Email</b>? This process cannot be undone.</p>
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-secondary btn-lg mr-2 rounded-lg" data-dismiss="modal">Cancel</button>
+                                                    <form asp-controller="Users" asp-action="Delete" asp-route-id="@user.Id" method="post">
+                                                        <input type="submit" value="Delete" class="btn btn-lg btn-danger" />
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            }
+                        </td>
+                    </tr>
+
+
+                }
+            </tbody>
+        </table>
+
+    }
+
+
+    <br />
+
+    @{
+        string prevButtonState = !this.Model.HasPrevPage ? "disabled" : "";
+        string nextButtonState = !this.Model.HasNextPage ? "disabled" : "";
+    }
+
+
+    <a asp-controller="Users" asp-action="Index" asp-route-PageNumber="@(this.Model.PageNumber - 1)" class="btn btn-outline-warning m-2 @prevButtonState">Prev. Page</a>
+    <a class="text-white">Page @this.Model.PageNumber of @this.Model.TotalPages</a>
+    <a asp-controller="Users" asp-action="Index" asp-route-PageNumber="@(this.Model.PageNumber + 1)" class="btn btn-outline-warning m-2 @nextButtonState">Next Page</a>
+
+</body>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<style>
+
+    .table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
+        background-color: #dd151540;
+    }
+</style>

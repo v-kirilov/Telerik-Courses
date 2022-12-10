@@ -1,0 +1,321 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+@inject IAuthManager authManager
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="description" content="Specer Template">
+	<meta name="keywords" content="Specer, unica, creative, html">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>Play to Win</title>
+
+	<!-- Google Font -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&amp;display=swap" rel="stylesheet">
+
+	<!-- Css Styles -->
+	<link rel="stylesheet" href="/css/bootstrap.min.css" type="text/css">
+	<link rel="stylesheet" href="/lib/font-awesome/css/all.css" type="text/css">
+	<link rel="stylesheet" href="/css/owl.carousel.min.css" type="text/css">
+	<link rel="stylesheet" href="/css/magnific-popup.css" type="text/css">
+	<link rel="stylesheet" href="/css/slicknav.min.css" type="text/css">
+	<link rel="stylesheet" href="/css/style.css" type="text/css">
+</head>
+<body>
+
+	<!-- Offcanvas Menu Section Begin -->
+	<div class="offcanvas-menu-overlay"></div>
+	<div class="offcanvas-menu-wrapper">
+		<div class="canvas-close">
+			<i class="fa fa-close"></i>
+		</div>
+		<div class="search-btn search-switch">
+			<i class="fa fa-search"></i>
+		</div>
+		<div class="header__top--canvas">
+			<div class="ht-info">
+				<ul>
+					<li class="time">@DateTime.Now</li>
+					@if (this.authManager.CurrentUser == null)
+					{
+						<li><a asp-controller="Users" asp-action="Register" type="button" class="btn btn-warning rounded-pill float-right m-1"><i class="fa fa-user-plus" aria-hidden="true"></i>&nbsp&nbspSign-up</a></li>
+						<li><a asp-controller="Users" asp-action="Login" type="button" class="btn btn-dark rounded-pill float-right m-1"><i class="fa fa-sign-in" aria-hidden="true"></i>&nbsp&nbspSign-in</a></li>
+					}
+					else
+					{
+						<li><a asp-controller="Users" asp-action="Logout" type="button" class="btn btn-dark rounded-pill float-right m-1"><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp&nbspSign-out</a></li>
+						<li><a asp-controller="Users" asp-action="Details" asp-route-id=@this.authManager.CurrentUser.Id type="button" class="btn btn-warning rounded-pill float-right m-1"><i class="fa fa-user" aria-hidden="true"></i>&nbsp&nbspMy profile</a></li>
+					}
+				</ul>
+			</div>
+
+		</div>
+		<ul class="main-menu mobile-menu">
+			<li><a asp-controller="Home" asp-action="Index">Home</a></li>
+			<li>
+				<a href="#">Tournaments</a>
+				<ul class="dropdown">
+					<li><a asp-controller="Tournaments" asp-action="Index">Information</a></li>
+					<li><a asp-controller="Tournaments" asp-action="Create">Create</a></li>
+					<li><a asp-controller="Tournaments" asp-action="Past">Past</a></li>
+					<li><a asp-controller="Tournaments" asp-action="Current">Current</a></li>
+					<li><a asp-controller="Tournaments" asp-action="Future">Future</a></li>
+
+				</ul>
+			</li>
+			<li>
+				<a href="#">Players</a>
+				<ul class="dropdown">
+					@if (this.authManager.CurrentUser != null && (authManager.CurrentUser.Role.Name == "Admin" || this.authManager.CurrentUser.Role.Name == "Director"))
+					{
+						<li><a asp-controller="Players" asp-action="Create">Create</a></li>
+					}
+					<li><a asp-controller="Players" asp-action="Index">All players</a></li>
+				</ul>
+			</li>
+			<li>
+				<a href="#">Matches</a>
+				<ul class="dropdown">
+					<li><a asp-controller="Matches" asp-action="Index">Information</a></li>
+					<li><a asp-controller="Matches" asp-action="Create">Create</a></li>
+					<li><a asp-controller="Matches" asp-action="Past">Past</a></li>
+					<li><a asp-controller="Matches" asp-action="Current">Current</a></li>
+					<li><a asp-controller="Matches" asp-action="Future">Future</a></li>
+				</ul>
+			</li>
+			@if (this.authManager.CurrentUser != null)
+			{
+				<li>
+					<a href="#">Users</a>
+					<ul class="dropdown">
+						<li><a asp-controller="Users" asp-action="Index">All users</a></li>
+					</ul>
+				</li>
+			}
+			@if (this.authManager.CurrentUser != null && this.authManager.CurrentUser.Role.Name == "Admin")
+			{
+				<li>
+					<a href="#">Requests</a>
+					<ul class="dropdown">
+						<li><a asp-controller="Requests" asp-action="Index">All requests</a></li>
+					</ul>
+				</li>
+			}
+			<li><a asp-controller="Home" asp-action="About">About</a></li>
+			<li>
+				<a href="/api/swagger">API</a>
+			</li>
+		</ul>
+
+		<div id="mobile-menu-wrap"></div>
+	</div>
+	<!-- Offcanvas Menu Section End -->
+	<header class="header-section">
+		<div class="header__top">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="ht-info">
+							<ul>
+								<li class="time">@DateTime.Now</li>
+							</ul>
+						</div>
+					</div>
+					<div class="col-lg-6 m-auto">
+						@if (this.authManager.CurrentUser == null)
+						{
+							<a asp-controller="Users" asp-action="Register" type="button" class="btn btn-warning rounded-pill float-right m-1"><i class="fa fa-user-plus" aria-hidden="true"></i>&nbsp&nbspSign-up</a>
+							<a asp-controller="Users" asp-action="Login" type="button" class="btn btn-dark rounded-pill float-right m-1"><i class="fa fa-sign-in" aria-hidden="true"></i>&nbsp&nbspSign-in</a>
+						}
+						else
+						{
+							<a asp-controller="Users" asp-action="Logout" type="button" class="btn btn-dark rounded-pill float-right m-1"><i class="fa fa-sign-out" aria-hidden="true"></i>&nbsp&nbspSign-out</a>
+							<a asp-controller="Users" asp-action="Details" asp-route-id=@this.authManager.CurrentUser.Id type="button" class="btn btn-warning rounded-pill float-right m-1"><i class="fa fa-user" aria-hidden="true"></i>&nbsp&nbspMy profile</a>
+						}
+					</div>
+				</div>
+			</div>
+			<div class="header__nav">
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-2">
+							<div class="logo">
+								<a><img src="/img/paytowinlogo.png" alt="logo"></a>
+							</div>
+						</div>
+						<div class="col-lg-10">
+							<div class="nav-menu">
+								<ul class="main-menu">
+									<li><a asp-controller="Home" asp-action="Index">Home</a></li>
+									<li>
+										<a href="#">Tournaments</a>
+										<ul class="dropdown">
+											<li><a asp-controller="Tournaments" asp-action="Index">Information</a></li>
+											<li><a asp-controller="Tournaments" asp-action="Create">Create</a></li>
+											<li><a asp-controller="Tournaments" asp-action="Past">Past</a></li>
+											<li><a asp-controller="Tournaments" asp-action="Current">Current</a></li>
+											<li><a asp-controller="Tournaments" asp-action="Future">Future</a></li>
+
+										</ul>
+									</li>
+									<li>
+										<a href="#">Players</a>
+										<ul class="dropdown">
+											@if (this.authManager.CurrentUser != null && (authManager.CurrentUser.Role.Name == "Admin" || this.authManager.CurrentUser.Role.Name == "Director"))
+											{
+												<li><a asp-controller="Players" asp-action="Create">Create</a></li>
+											}
+											<li><a asp-controller="Players" asp-action="Index">All players</a></li>
+											<li><a asp-controller="Players" asp-action="PlayersRanking">Players ranking</a></li>
+										</ul>
+									</li>
+									<li>
+										<a href="#">Matches</a>
+										<ul class="dropdown">
+											<li><a asp-controller="Matches" asp-action="Index">Information</a></li>
+											<li><a asp-controller="Matches" asp-action="Create">Create</a></li>
+											<li><a asp-controller="Matches" asp-action="Past">Past</a></li>
+											<li><a asp-controller="Matches" asp-action="Current">Current</a></li>
+											<li><a asp-controller="Matches" asp-action="Future">Future</a></li>
+										</ul>
+									</li>
+									@if (this.authManager.CurrentUser != null)
+									{
+										<li>
+											<a href="#">Users</a>
+											<ul class="dropdown">
+												<li><a asp-controller="Users" asp-action="Index">All users</a></li>
+											</ul>
+										</li>
+									}
+									@if (this.authManager.CurrentUser != null && this.authManager.CurrentUser.Role.Name == "Admin")
+									{
+										<li>
+											<a href="#">Requests</a>
+											<ul class="dropdown">
+												<li><a asp-controller="Requests" asp-action="Index">All requests</a></li>
+											</ul>
+										</li>
+									}
+									<li><a asp-controller="Home" asp-action="About">About</a></li>
+									<li>
+										<a href="/api/swagger">API</a>
+									</li>
+								</ul>
+								@*<div class="nm-right search-switch">
+								<i class="fa fa-search"></i>
+								</div>*@
+
+							</div>
+						</div>
+					</div>
+					<div class="canvas-open">
+						<i class="fa fa-bars"></i>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+
+
+	@*	<div class="container">
+	<main role="main" class="pb-3">*@
+	@RenderBody()
+	@*		</main>
+	</div>*@
+
+
+
+	<footer class="footer-section set-bg" data-setbg="/img/footer-bg.jpg" style="background-image: url(&quot;img/footer-bg.jpg&quot;);">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-3 col-md-6">
+					<div class="fs-logo">
+						<div class="logo">
+							<a><img src="/img/paytowinlogo.png" alt=""></a>
+						</div>
+						<ul>
+							<li><i class="fa fa-envelope"></i> Info.colorlib@gmail.com</li>
+							<li><i class="fa fa-copy"></i> +(12) 345 6789 10</li>
+							<li><i class="fa fa-thumb-tack"></i> 40 Baria Sreet 133/2 New York City, United State</li>
+						</ul>
+
+					</div>
+				</div>
+				<div class="col-lg-4 col-md-6 offset-lg-1">
+					<div class="fs-widget">
+						<h4>Top Club</h4>
+						<ul class="fw-links">
+							<li><a href="#">Brazil</a></li>
+							<li><a href="#">Germany</a></li>
+							<li><a href="#">Italy</a></li>
+							<li><a href="#">Argentina</a></li>
+							<li><a href="#">France</a></li>
+						</ul>
+						<ul class="fw-links">
+							<li><a href="#">England</a></li>
+							<li><a href="#">Netherlands</a></li>
+							<li><a href="#">Hungary</a></li>
+							<li><a href="#">Croatia</a></li>
+							<li><a href="#">Poland</a></li>
+						</ul>
+					</div>
+				</div>
+				<div class="col-lg-4">
+					<div class="fs-widget">
+						<h4>Recent News</h4>
+
+						<div class="fw-item">
+							<h5><a href="#">England win shows they have the spark to go far at World Cup</a></h5>
+							<ul>
+								<li><i class="fa fa-calendar"></i> May 19, 2019</li>
+								<li><i class="fa fa-edit"></i> 3 Comment</li>
+							</ul>
+						</div>
+						<div class="fw-item">
+							<h5><a href="#">Sri Lanka v Australia: Cricket World Cup 2019 – live!</a></h5>
+							<ul>
+								<li><i class="fa fa-calendar"></i> May 19, 2019</li>
+								<li><i class="fa fa-edit"></i> 3 Comment</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="copyright-option">
+				<div class="row">
+					<div class="col-lg-12">
+						<div class="co-text">
+							<p>
+								<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+								Copyright ©<script>document.write(new Date().getFullYear());</script>2022 All rights reserved | This template is made with <i class="fa fa-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib</a>
+								<!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+							</p>
+						</div>
+						<div class="co-widget">
+							<ul>
+								<li><a href="#">Copyright notification</a></li>
+								<li><a href="#">Terms of Use</a></li>
+								<li><a href="#">Privacy Policy</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</footer>
+
+	<script src="/js/jquery-3.3.1.min.js"></script>
+	<script src="/js/bootstrap.min.js"></script>
+	<script src="/js/jquery.magnific-popup.min.js"></script>
+	<script src="/js/jquery.slicknav.js"></script>
+	<script src="/js/owl.carousel.min.js"></script>
+	<script src="/js/main.js"></script>
+	@RenderSection("Scripts", required: false)
+</body>
+</html>

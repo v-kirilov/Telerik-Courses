@@ -1,0 +1,63 @@
+﻿
+@model MatchDto
+
+
+<section class="contact-section spad">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="contact-form">
+                    <h2 class="text-white">Contact Form</h2>
+                    <form asp-controller="Matches" asp-action="@this.ViewData["Action"]" asp-route-id="@this.Model.Id" method="post">
+                        <div class="group-in">
+                            <label asp-for="@this.Model.Players[0]" class="text-white">Player 1</label>
+                            <input asp-for="@this.Model.Players[0]" type="text"  class="form-control" id="myInput1" placeholder="Enter Player 1 Name">
+                        </div>
+                        <div class="group-in">
+                            <label asp-for="@this.Model.Players[1]" class="text-white">Player 2</label>
+                            <input asp-for="@this.Model.Players[1]" type="text"  class="form-control" id="myInput2" placeholder="Enter Player 2 Name" oninput="validateName()">
+                            <p id="demo"></p>
+                        </div>
+                        <div class="group-in">
+                            <label asp-for="@this.Model.Date" class="text-white">Date</label>
+                            <input type="date" id="date" name="Date" oninput="validateDate()">
+                            <small id="emailHelp" class="form-text text-muted" >Select date from the calendar</small>
+                            <span asp-validation-for="@this.Model.Date" class="form-error text-danger"></span>
+                        </div>
+                        <div class="group-in">
+                            <label asp-for="@this.Model.Format" class="text-white">Match Format</label>
+                            <select asp-for="@this.Model.Format" class="form-select" id="format">
+
+				<option value="TimeLimited">Time Limited</option>
+				<option value="ScoreLimited">Score Limited</option>
+				<option selected>Choose...</option>
+			</select>
+                            <small id="emailHelp" class="form-text text-muted">Select format from the dropdown menu</small>
+                            <span asp-validation-for="@this.Model.Format" class="form-error text-danger"></span>
+                        </div>
+                        <button type="submit">Submit Now</button>    
+                    </form>
+                </div>
+            </div>
+        </div>
+      </div>
+</section>
+
+<script>
+function validateName() {
+  var input1 = document.getElementById("myInput1").value;
+  var input2 = document.getElementById("myInput2").value;
+  if (input1 == input2){
+      document.getElementById("demo").innerHTML = "Please use another name for player 2";
+      document.getElementById("myInput2").value = "";
+  }
+  else{
+      document.getElementById("demo").innerHTML = "";
+  }
+  
+}
+
+</script>
+
+
+

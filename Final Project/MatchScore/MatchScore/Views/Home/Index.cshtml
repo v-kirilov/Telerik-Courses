@@ -1,0 +1,53 @@
+﻿@{
+	ViewData["Title"] = "Home Page";
+}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="/css/style_home.css">
+    </head>
+    <body onload="slider()">
+        <div class="banner">
+            <div class="slider">
+                <img src="/img/stadium.png" id="slideImg">
+            </div>
+            <div class="overlay">    
+                <div class="content">
+                    <h1>PLAYtoWIN</h1>
+                    <h1>PLAYtoWIN</h1>
+                    <div class="sub-title">
+                        <h3 id="sub-title">Welcome | Play | Have Fun</h3>
+                    </div>
+                    
+                </div>        
+            </div>
+            
+        </div>
+    
+        <script>
+            var slideImg = document.getElementById("slideImg");
+    
+            var images = new Array(
+                "/img/stadium.png",
+                 "/img/main-slider-img1.jpg",
+                 "/img/bg_3.jpg",
+                 "/img/bg_1.jpg"
+            );
+    
+            var len = images.length;
+            var i = 0;
+    
+            function slider(){
+                if (i > len -1){
+                    i = 0;
+                }
+                slideImg.src = images[i];
+                i++;
+                setTimeout('slider()', 3000);
+            }
+        </script>
+    </body>
+    </html>

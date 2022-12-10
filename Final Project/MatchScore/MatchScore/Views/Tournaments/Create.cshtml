@@ -1,0 +1,171 @@
+﻿@{
+	ViewData["Title"] = "Create-Tournament";
+	List<PlayerDto> allPlayers = this.playerService.GetAll();
+	List<SportClub> clubs = this.sportsClubService.GetAll();
+	List<string> names = new List<string>();
+}
+@model TournamentDto
+@inject IUsersService userService
+@inject IPlayersService playerService
+@inject ISportClubsService sportsClubService
+@inject IPhotoService photoService
+
+
+
+<form asp-controller="Tournaments" asp-action="Create" method="post" class="container">
+
+	<div style="background-color:#2d2d2d" class="jumbotron text-center mb-0 " @*style="background-image: url(&quot;/img/stadium.jpg&quot;);
+		 background-position: center; background-repeat: no-repeat;
+		 background-size: cover; height: auto;"*@>
+
+		<div class="row g-2 mb-4">
+			<div class="col-md">
+				<div class="form-floating">
+					<label class="text-white" for="floatingInputGrid">Enter Title</label>
+					<input asp-for="Title" type="text"  class="form-control" id="floatingInputGrid" placeholder="Enter Tournament Title" name="Title">
+					<span asp-validation-for="Title" class="form-error text-danger"></span>
+
+				</div>
+			</div>
+		</div>
+
+		<div class="row g-2 mb-4">
+			<div class="col-md">
+				<div class="form-floating">
+
+					<label class="text-white" for="date">Start date</label>
+					<input asp-for="StartDate" type="date" value="@DateTime.Now.AddMinutes(1)" name="StartDate" class="form-control" id="date">
+
+				</div>
+			</div>
+			<div class="col-md">
+				<label class="text-white" for="date">End date</label>
+				<input asp-for="EndDate" type="date" value="@DateTime.Now.AddDays(1)" name="EndDate" class="form-control" id="date">
+			</div>
+		</div>
+
+		<div class="row g-2">
+			<div class="col-md">
+				<span asp-validation-for="StartDate" class="form-error text-danger"></span>
+			</div>
+			<div class="col-md">
+				<span asp-validation-for="EndDate" class="form-error text-danger"></span>
+			</div>
+		</div>
+
+		<div class="row g-2 mb-4">
+
+			<div class="col-md">
+				<div class="input-group mb-3">
+
+					<label class="input-group-text" for="inputGroupSelect01">Prize</label>
+					<select asp-for="Prize" class="form-control" id="inputGroupSelect01">
+
+						<option value="1">Financial</option>
+						<option value="2">Honorary</option>
+						<option selected>Choose...</option>
+
+					</select>
+				</div>
+			</div>
+
+			<div class="col-md">
+				<div class="input-group mb-3">
+
+					<label class="input-group-text" for="inputGroupSelect01">Format</label>
+					<select asp-for="Format" class="form-control" id="inputGroupSelect01">
+
+						<option value="0">Knockout</option>
+						<option value="1">League</option>
+						<option selected>Choose...</option>
+
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<div class="row g-2">
+			<div class="col-md">
+				<span asp-validation-for="Prize" class="form-error text-danger"></span>
+			</div>
+			<div class="col-md">
+				<span asp-validation-for="Format" class="form-error text-danger"></span>
+			</div>
+		</div>
+	</div>
+
+	<div class="club-tab-list">
+		<div class="row">
+			<div class="col-lg-8 m-auto">
+				<ul class="nav nav-tabs" role="tablist">
+
+					<li class="nav-name">
+						<h4 class="nav-link text-warning" data-toggle="tab" href="#tab1" role="tab">Registered players</h4>
+					</li>
+
+					@*<li class="nav-item">
+					<a class="nav-link" data-toggle="tab" href="#tabs-2" role="tab">Midfielder</a>
+					</li>*@
+				</ul><!-- Tab panes -->
+
+				<div class="tab-content">
+
+					<div class="tab-pane active" id="tab1" role="tabpanel">
+						<div class="club-tab-content">
+							@foreach (var player in allPlayers)
+							{
+
+								<div class="ct-item">
+									<div class="ci-text">
+										<img src="@photoService.GetPhotoUrl(player.Id)" alt="">
+									<a asp-controller="Players" asp-action="Details" asp-route-id="@player.Id" class="ci-name text-warning"><h4>@player.FullName</h4></a>
+
+										@*<h5 class="text-white">@player.FullName</h5>*@
+									</div>
+									<div class="ci-name">
+										<input name="PlayersFullName" value="@player.FullName" type="checkbox" />
+										<label class="form-check-label text-warning" for="flexCheckIndeterminate">
+											Add/Remove
+										</label>
+									</div>
+								</div>
+
+							}
+						</div>
+					</div>
+
+				</div>
+
+
+			</div>
+
+		</div>
+
+	</div>
+	@*<button type="submit" class="btn btn-success btn-lg">Create</button>*@
+	<div style="background-color:#2d2d2d" class="jumbotron text-center mb-0 pb-2 pt-2 pr-0 pl-0">
+
+		<button asp-action="Create" asp-controller="Tournaments" method="post" type="submit"
+				class="btn btn-outline-warning btn-lg">
+			Create
+		</button>
+		<a asp-controller="Tournaments" asp-action="Index" class="btn btn-outline-warning btn-lg">Back</a>
+
+	</div>
+
+</form>
+
+<style>
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: 0;
+	color: #ffc107;
+	font-weight: 400;
+	font-family: "Roboto", sans-serif;
+}
+</style>

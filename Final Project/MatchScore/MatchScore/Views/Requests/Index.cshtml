@@ -1,0 +1,125 @@
+﻿@{
+    this.ViewData["Title"] = "Requests";
+
+    var statusApproved = "Approved";
+    var statusDeclained = "Declined";
+}
+
+@model PaginatedList<RequestDtoName>
+@inject IAuthManager authManager
+
+<body>
+    @*<div class="body-content">
+        <h3 style="text-align:center" class="p-3">Requests</h3>
+        </div>*@
+
+    <nav class="navbar navbar-light bg-dark text-white">
+        <form asp-controller="Requests" asp-action="Index" class="form-inline" method="get">
+
+            <p class="p-2">
+                <label for="select" class="mt-3">Search by user email</label>
+            </p>
+            <input class="form-control mr-sm-2 p-2" name="search" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Search</button>
+
+        </form>
+    </nav>
+
+    @if (!this.Model.Any(r => r.Type == RequestType.PromoteToDirector.ToString()))
+    {
+        <p>
+            <h3 align="center" class=" text-white">No promote to director requests found 😔</h3>
+        </p>
+    }
+    else
+    {
+        <h3 style="text-align:center;" class="p-3 text-white">Promote to Director Requests</h3>
+        <table class="table table-striped text-white">
+            <thead>
+                <tr>
+                    <th scope="col"><b>User Email</b></th>
+                    <th scope="col"><b>Type</b></th>
+
+                    <th scope="col"><b>Options</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var request in this.Model.Where(r => r.Type == RequestType.PromoteToDirector.ToString()))
+                {
+                    <tr>
+                        <td>@request.UserEmail</td>
+                        <td>@request.Type</td>
+                        @*<td>@request.PlayerFullName</td>*@
+                        <td>
+                            <a asp-controller="Requests" asp-action="Update" asp-route-id="@request.Id" asp-route-status=@statusApproved class="btn btn-success">Approve</a>
+                            <a asp-controller="Requests" asp-action="Update" asp-route-id="@request.Id" asp-route-status=@statusDeclained class="btn btn-danger">Decline</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        string prevButtonState = !this.Model.HasPrevPage ? "disabled" : "";
+        string nextButtonState = !this.Model.HasNextPage ? "disabled" : "";
+
+
+         <a asp-controller="Requests" asp-action="Index" asp-route-PageNumber="@(this.Model.PageNumber - 1)" class="btn btn-outline-warning m-2 @prevButtonState">Prev. Page</a>
+        <a class="text-white">Page @this.Model.PageNumber of @this.Model.TotalPages</a>
+        <a asp-controller="Requests" asp-action="Index" asp-route-PageNumber="@(this.Model.PageNumber + 1)" class="btn btn-outline-warning m-2 @nextButtonState">Next Page</a>
+    }
+
+    <br />
+
+
+
+    @if (!this.Model.Any(r => r.Type == RequestType.LinkProfile.ToString()))
+    {
+        <p>
+            <h3 align="center" class="text-white">No link-profile requests found 😔</h3>
+        </p>
+    }
+    else
+    {
+        <h3 style="text-align:center" class="p-3 text-white">Link-Profile Requests</h3>
+        <table  class="table table-striped text-white">
+            <thead>
+                <tr>
+                    <th scope="col"><b>User Email</b></th>
+                    <th scope="col"><b>Type</b></th>
+                    <th scope="col"><b>Player Full Name</b></th>
+
+                    <th scope="col"><b>Options</b></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var request in this.Model.Where(r => r.Type == RequestType.LinkProfile.ToString()))
+                {
+                    <tr>
+                        <td>@request.UserEmail</td>
+                        <td>@request.Type</td>
+                        <td>@request.PlayerFullName</td>
+                        <td>
+                            <a asp-controller="Requests" asp-action="Update" asp-route-id="@request.Id" asp-route-status=@statusApproved class="btn btn-success">Approve</a>
+                            <a asp-controller="Requests" asp-action="Update" asp-route-id="@request.Id" asp-route-status=@statusDeclained class="btn btn-danger">Decline</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        string prevButtonState = !this.Model.HasPrevPage ? "disabled" : "";
+        string nextButtonState = !this.Model.HasNextPage ? "disabled" : "";
+
+
+         <a asp-controller="Requests" asp-action="Index" asp-route-PageNumber="@(this.Model.PageNumber - 1)" class="btn btn-outline-warning m-2 @prevButtonState">Prev. Page</a>
+        <a class="text-white">Page @this.Model.PageNumber of @this.Model.TotalPages</a>
+        <a asp-controller="Requests" asp-action="Index" asp-route-PageNumber="@(this.Model.PageNumber + 1)" class="btn btn-outline-warning m-2 @nextButtonState">Next Page</a>
+    }
+
+</body>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<style>
+
+    .table-striped > tbody > tr:nth-child(2n+1) > td, .table-striped > tbody > tr:nth-child(2n+1) > th {
+   background-color: #dd151540;
+}
+</style>

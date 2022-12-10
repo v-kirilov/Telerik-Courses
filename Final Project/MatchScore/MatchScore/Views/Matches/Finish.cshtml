@@ -1,0 +1,48 @@
+﻿@model MatchDto
+@inject IMatchesService matchesService
+@inject IPlayersService playersService
+
+<section class="schedule-section pb-100" style="background-image: url('https://www.wallpapertip.com/wmimgs/52-521093_outstanding-city-of-cambridge-employee-award-winners-trophy.jpg'); ">
+    <div class="container-fluid text-center">
+         @{if ((string)this.ViewData["result"] == "The match has finished in a draw.")
+         {
+                                      <div><h2>@this.ViewData["result"]</h2></div>
+         }
+         else
+         {
+                                      <div class="container-fluid text-center">
+                                        <img class="winner-img" src="/img/winner_label.jpg" alt="" />
+                                      </div>
+                 
+              var winner = this.playersService.GetById((int)this.ViewData["id"]);
+                                      <a asp-controller="Players" asp-action="Details" asp-route-id="@winner.Id" class="btn-change"><h1>@winner.FullName</h1></a>
+         }
+         }
+    </div>
+         <br>
+         <br>
+         <br>
+    <div class="container-fluid text-center">
+         <h2>Final result @this.Model.Score1 : @this.Model.Score2</h2>
+    </div>
+</section>
+<style>
+    h1{
+        font-size: 70px;
+        font-weight:bold;
+
+    }
+    h2 {
+        font-weight:bold;
+    }
+    .winner-img{
+        max-width: 50%
+    }
+    .schedule-section{
+    width: 100%;
+    height: 80vh;
+    background-repeat: no-repeat;
+    background-position: center;
+    margin-top: 0;
+    }
+</style>

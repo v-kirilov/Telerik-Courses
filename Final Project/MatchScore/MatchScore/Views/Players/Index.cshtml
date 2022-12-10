@@ -1,0 +1,299 @@
+﻿@model PaginatedList<PlayerDto>
+@inject IAuthManager authManager
+
+@{
+    this.ViewData["Title"] = "Players";
+
+    var requestType = "LinkProfile";
+    var playerStatus = string.Empty;
+    var playerStatBackroundColor = string.Empty;
+
+    bool isAdmin = this.authManager.CurrentUser?.Role.Name == "Admin" ;
+    bool isUserLogged = this.authManager.CurrentUser != null;
+
+    bool CanEditPlayer(PlayerDto player)
+    {
+        bool result = (this.authManager.CurrentUser?.Role.Name == "Director" && player.UserEmail == "none") ||
+                       this.authManager.CurrentUser?.Role.Name == "Admin" || this.authManager.CurrentUser?.Email == player.UserEmail;
+        return result;
+    }
+
+    bool IsPlayerUnlcaimed(PlayerDto player)
+    {
+        bool result = player.UserEmail == "none";
+        return result;
+    }
+
+    bool HasUserWaitingRequests()
+    {
+        bool? result = this.authManager.CurrentUser?.Requests?.Any(r => r.Status.ToString() == "Waiting");
+
+        if (result == null || result == true)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool CanAssociate(PlayerDto player)
+    {
+        bool result = isUserLogged && this.authManager.CurrentUser?.Role.Name == "Default" && player.UserEmail == "none";
+        return result;
+    }
+
+    string requestButtonState = HasUserWaitingRequests() ? "disabled" : "";
+    string pointerEvents = HasUserWaitingRequests() ? "none" : "";
+}
+
+<body>
+    <section class="breadcrumb-section set-bg" data-setbg="/img/breadcrumb-bg.jpg">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="bs-text">
+                    <h2>Our Players</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+    <nav class="navbar navbar-light bg-dark text-white">
+        <form asp-controller="Players" asp-action="Index" class="form-inline" method="get">
+
+            <p class="p-2">
+                <label for="select">Search by</label>
+                <select id="select" name="filter">
+                    <option value="">Choose...</option>
+                    <optgroup label="Options:">
+                        <option value="FullName">Full Name</option>
+                        <option value="Country">Country</option>
+                        <option value="SportClub">Sport Club</option>
+                    </optgroup>
+
+                </select>
+            </p>
+            <input class="form-control mr-sm-2 p-2" name="search" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-warning my-2 my-sm-0 mr-5" type="submit">Search</button>
+
+
+            <div class="form-check form-check-inline ml-5 mr-3">
+                <input onclick="myFunction()" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" checked value="option1">
+                <label class="form-check-label" for="inlineRadio1">All</label>
+            </div>
+            <div class="form-check form-check-inline mr-3">
+                <input onclick="myFunction()" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio2" value="option2">
+                <label class="form-check-label" for="inlineRadio2">Associated</label>
+            </div>
+            <div class="form-check form-check-inline mr-3">
+                <input onclick="myFunction()" class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option2">
+                <label class="form-check-label" for="inlineRadio3">Unclaimed</label>
+            </div>
+
+        </form>
+    </nav>
+
+    @if (this.Model.Count() <= 0)
+    {
+        <p>
+            <h3 align="center">No players found 😔</h3>
+        </p>
+    }
+    else
+    {
+        <section class="py-2 mb-0">
+            <div class="container px-4 px-lg-5 mt-3 mb-0">
+                <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
+                    @foreach (var player in this.Model)
+                    {
+                        if (IsPlayerUnlcaimed(player))
+                        {
+                            playerStatus = "Unclaimed";
+                            playerStatBackroundColor = "green";
+                        }
+                        else
+                        {
+                            playerStatus = "Associated";
+                            playerStatBackroundColor = "red";
+                        }
+
+                        var tm = "#myModal" + player.Id;
+                        var mid = "myModal" + player.Id;
+
+                        var tmRequest = "#myRequestModal" + player.Id;
+                        var midRequest = "myRequestModal" + player.Id;
+
+                        <div name="cards" class="col mb-4">
+                            <div class="card h-100">
+                                <!-- Player image-->
+                        <img class="card-img-top" src=@player.PhotoUrl alt="..." />
+                                <!-- Player details-->
+                        <div class="card-body p-4">
+                                    <div class="text-center mb-3">
+                                        <!-- Player name-->
+                                <h4 class="fw-bolder"><b>@player.FullName</b></h4>
+                                    </div>
+                                    <!-- Player country-->
+                            <div class="text-center  mb-auto">
+                                        Country: <b>@player.Country</b>
+                                    </div>
+                                    <!-- Player sport club-->
+                            <div class="text-center  m-auto">
+                                        Sport club: <b>@player.SportClub</b>
+                                    </div>
+                                    <div style="background-color:@playerStatBackroundColor" class="text-center m-auto">
+                                        <b name="playerStatus">@playerStatus</b>
+                                    </div>
+
+                                </div>
+
+                                <!-- Player actions-->
+                        <div class="d-flex justify-content-center border-top border-dark pt-1 pb-2">
+
+                                    <a asp-controller="Players" asp-action="Details" asp-route-id="@player.Id" class="btn btn-dark m-auto">Details</a>
+                                    @if (isUserLogged)
+                                    {
+                                        @if (CanEditPlayer(player))
+                                        {
+
+                                            <a asp-controller="Players" asp-action="Edit" asp-route-id="@player.Id" class="btn btn-primary m-auto">Edit</a>
+
+                                        }
+                                        @if (isAdmin)
+                                        {
+                                            <button type="button"  class="btn btn-danger m-auto" data-toggle="modal" data-target="@tm">
+                                                Delete
+                                            </button>
+                                        }
+                                    }
+
+                                </div>
+                                @if (CanAssociate(player))
+                                {
+                                    <button type="button" style="pointer-events: @pointerEvents" class="btn btn-warning btn-lg btn-block @requestButtonState" data-toggle="modal" data-target="@tmRequest">Associate</button>
+                                }
+
+                                @if(player.TournamentsPlayed <= 0 && player.MatchesPlayed <= 0)
+                        {
+                            <!-- The Modal -->
+                             <div class="modal fade" id="@mid" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <!-- Modal Header -->
+                            <div class="modal-header">
+                                        <h4 class="modal-title" id="myModalLabel">Delete Confirmation</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <!-- Modal body -->
+                            <div class="modal-body text-center mb-5">
+                                        <img src="~/img/warning-sign.png" style="width: 150px;" class="img-responsive">
+                                        <h2>Are You Sure?</h2>
+                                        <p>Do you really want to delete player: <b style="font-size: 17px">@player.FullName</b>? This process cannot be undone.</p>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-secondary btn-lg mr-2 rounded-lg" data-dismiss="modal">Cancel</button>
+                                            <form asp-controller="Players" asp-action="Delete" asp-route-id="@player.Id" method="post">
+                                                <input type="submit" value="Delete" class="btn btn-lg btn-danger" />
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="modal fade" id="@mid" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <!-- Modal Header -->
+                            <div class="modal-header">
+                                        <h4 class="modal-title" id="myModalLabel">Action Denied</h4>
+                                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    </div>
+                                    <!-- Modal body -->
+                            <div class="modal-body text-center mb-5">
+                                        <img src="~/img/denied-action.png" style="width: 150px;" class="img-responsive">
+                                        <h2>This player can't be deleted</h2>
+                                        <p>This player cannot be deleted because he participated in tournaments and/or matches<p>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-secondary btn-lg mr-2 rounded-lg" data-dismiss="modal">Ok</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            </div>
+                        }
+
+                                <div class="modal fade" id="@midRequest" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h4 class="modal-title" id="myModalLabel">Request Confirmation</h4>
+                                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                                            </div>
+                                            <div class="modal-body text-center mb-5">
+                                                <img src="~/img/icon-confirm.png" style="width: 150px;" class="img-responsive">
+                                                <h2>Are You Sure?</h2>
+                                                <p>Do you really want to associate with player: <b style="font-size: 17px">@player.FullName</b>? </p>
+                                                <div class="btn-group">
+                                                    <a asp-controller="Requests" asp-action="CreateLinkRequest" asp-route-type=@requestType asp-route-fullname=@player.FullName class="btn btn-success btn-lg btn-block mr-2 @requestButtonState">Associate</a>
+                                                <button type="button" class="btn btn-danger btn-lg rounded-lg" data-dismiss="modal">Cancel</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+    }
+
+    @{
+        string prevButtonState = !this.Model.HasPrevPage ? "disabled" : "";
+        string nextButtonState = !this.Model.HasNextPage ? "disabled" : "";
+    }
+
+    <div class="d-flex justify-content-center mb-1">
+        <a asp-controller="Players" asp-action="Index" asp-route-PageNumber="@(this.Model.PageNumber - 1)" class="btn btn-outline-warning m-2 @prevButtonState">Prev. Page</a>
+        <a class="text-white mt-3">Page @this.Model.PageNumber of @this.Model.TotalPages</a>
+        <a asp-controller="Players" asp-action="Index" asp-route-PageNumber="@(this.Model.PageNumber + 1)" class="btn btn-outline-warning m-2 @nextButtonState">Next Page</a>
+    </div>
+
+</body>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+    function myFunction() {
+      var allButton = document.getElementById("inlineRadio1");
+      var asscociatedButton = document.getElementById("inlineRadio2");
+      var unclaimedButton = document.getElementById("inlineRadio3");
+      var cards = document.getElementsByName("cards");
+
+      for (let card of cards){
+          card.style.display = "block";
+      }
+
+      for (let card of cards) {
+            var playerStatus = card.getElementsByTagName("b");
+            var playerStatus = playerStatus[3].textContent;
+
+            if(allButton.checked){
+                card.style.display = "block";
+            }
+
+            if(asscociatedButton.checked && playerStatus === "Unclaimed"){
+                card.style.display = "none";
+            }
+
+            if(unclaimedButton.checked && playerStatus === "Associated"){
+                card.style.display = "none";
+            }
+      }
+    }
+</script>

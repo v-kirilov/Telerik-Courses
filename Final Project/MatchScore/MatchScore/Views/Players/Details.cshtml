@@ -1,0 +1,187 @@
+﻿@inject IAuthManager authManager
+@model PlayerDto
+@{
+    var requestType = "LinkProfile";
+    bool isAdmin = this.authManager.CurrentUser?.Role.Name == "Admin";
+    bool isUserLogged = this.authManager.CurrentUser != null;
+    bool canEditPlayer = (this.authManager.CurrentUser?.Role.Name == "Director" && this.Model.UserEmail == "none") ||
+                     this.authManager.CurrentUser?.Role.Name == "Admin" || this.authManager.CurrentUser?.Email == this.Model.UserEmail;
+
+    bool HasUserWaitingRequests()
+    {
+        bool? result = this.authManager.CurrentUser?.Requests?.Any(r => r.Status.ToString() == "Waiting");
+
+        if (result == null || result == true)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool CanAssociate(PlayerDto player)
+    {
+        bool result = isUserLogged && this.authManager.CurrentUser?.Role.Name == "Default" && player.UserEmail == "none";
+        return result;
+    }
+
+    string requestButtonState = HasUserWaitingRequests() ? "disabled" : "";
+    string pointerEvents = HasUserWaitingRequests() ? "none" : "";
+}
+<link rel="stylesheet" href="~/css/player.css" />
+<div class="main border">
+    <div class="row">
+        <div class="col-lg-7">
+            <center>
+                <div class="title"> <b>@Model.FullName</b> </div>
+            </center>
+            <div class="details">
+                <table class="table bio">
+                    <tr>
+                        <td>Country:&nbsp <b>@Model.Country</b></td>
+                        <td>Sport club:&nbsp <b>@Model.SportClub</b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">Most played opponent:&nbsp <b>@Model.MostPlayedOpponent</b></td>
+                    </tr>
+                    <tr>
+                        <td>Best opponent:&nbsp <b>@Model.BestOpponent</b></td>
+                        <td>Win/Loss:&nbsp <b>@Model.BestWinLossRatio</b></td>
+                    </tr>
+                    <tr>
+                        <td>Worst opponent:&nbsp <b>@Model.WorstOpponent</b></td>
+                        <td>Win/Loss:&nbsp <b>@Model.WorstWinLossRatio</b></td>
+                    </tr>
+                    @if (!Model.UserEmail.Equals("none"))
+                    {
+                        <tr>
+                            <td colspan="2">Associated user:&nbsp <b>@Model.UserEmail</b></td>
+                        </tr>
+                    }
+                </table>
+                <center>
+                    @if (this.Model.TournamentsPlayed > 0)
+                    {
+                        <a asp-controller="Tournaments" asp-action="Index" asp-route-filter="Player" asp-route-search=@this.Model.FullName type="button" class="btn btn-warning btn-lg btn-block mt-4"><h3>Tournaments</h3></a>
+                    }
+                    else
+                    {
+                        <h3 class="mt-4">Tournaments</h3>
+                    }
+                    <p class="stats z-depth-4"><span class="one"> Played: @Model.TournamentsPlayed</span> &emsp;&emsp;&emsp;&emsp;<span class="two">Won: @Model.TournamentsWon</span></p><br>
+
+                    @if (this.Model.MatchesPlayed > 0)
+                    {
+                        <a asp-controller="Matches" asp-action="Index" asp-route-filter="Participant" asp-route-search=@this.Model.FullName type="button" class="btn btn-warning btn-lg btn-block mt-1"><h3>Matches</h3></a>
+                    }
+                    else
+                    {
+                        <h3 class="mt-1">Matches</h3>
+                    }
+                    <p class="stats z-depth-4"><span class="three">Played: @Model.MatchesPlayed</span>&emsp;&emsp; &emsp;&emsp;<span class="four">Won: @Model.MatchesWon</span></p><br>
+                </center>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <img src=@this.Model.PhotoUrl style="width:300px">
+            <div class="container mt-3">
+                @if (isUserLogged)
+                {
+                    @if (CanAssociate(this.Model))
+                    {
+                        <button type="button" style="pointer-events: @pointerEvents" class="btn btn-warning btn-lg btn-block @requestButtonState" data-toggle="modal" data-target="#myRequestModal">Associate</button>
+                    }
+                    @if (canEditPlayer)
+                    {
+                        <a asp-controller="Players" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary btn-lg btn-block">Edit</a>
+                    }
+                    @if (isAdmin)
+                    {
+                        <button type="button" class="btn btn-danger btn-lg btn-block" data-toggle="modal" data-target="#myModal">
+                            Delete
+                        </button>
+                        if (this.Model.TournamentsPlayed <= 0 && this.Model.MatchesPlayed <= 0)
+                        {
+                            <!-- The Modal -->
+                            <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <!-- Modal Header -->
+                            <div class="modal-header">
+                                            <h4 class="modal-title" id="myModalLabel">Delete Confirmation</h4>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+                                        <!-- Modal body -->
+                            <div class="modal-body text-center mb-5">
+                                            <img src="~/img/warning-sign.png" style="width: 150px;" class="img-responsive">
+                                            <h2>Are You Sure?</h2>
+                                            <p>Do you really want to delete player: <b style="font-size: 17px">@this.Model.FullName</b>? This process cannot be undone.</p>
+                                            <div class="btn-group">
+                                                <button type="button" class="btn btn-secondary btn-lg mr-2 rounded-lg" data-dismiss="modal">Cancel</button>
+                                                <form asp-controller="Players" asp-action="Delete" asp-route-id="@this.Model.Id" method="post">
+                                                    <input type="submit" value="Delete" class="btn btn-lg btn-danger" />
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="modal fade" id="myModal" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <!-- Modal Header -->
+                            <div class="modal-header">
+                                            <h4 class="modal-title" id="myModalLabel">Action Denied</h4>
+                                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                        </div>
+                                        <!-- Modal body -->
+                            <div class="modal-body text-center mb-5">
+                                            <img src="~/img/denied-action.png" style="width: 150px;" class="img-responsive">
+                                            <h2>This player can't be deleted</h2>
+                                            <p>This player cannot be deleted because he participated in tournaments and/or matches<p>
+                                                <div class="btn-group">
+                                                    <button type="button" class="btn btn-secondary btn-lg mr-2 rounded-lg" data-dismiss="modal">Ok</button>
+                                                </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    }
+                }
+
+                <div class="modal fade" id="myRequestModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myModalLabel">Request Confirmation</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            </div>
+                            <div class="modal-body text-center mb-5">
+                                <img src="~/img/icon-confirm.png" style="width: 150px;" class="img-responsive">
+                                <h2>Are You Sure?</h2>
+                                <p>Do you really want to associate with player: <b style="font-size: 17px">@this.Model.FullName</b>? </p>
+                                <div class="btn-group">
+                                    <a asp-controller="Requests" asp-action="CreateLinkRequest" asp-route-type=@requestType asp-route-fullname=@this.Model.FullName class="btn btn-success btn-lg btn-block mr-2 @requestButtonState">Associate</a>
+                                    <button type="button" class="btn btn-danger btn-lg rounded-lg" data-dismiss="modal">Cancel</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+     $(".messi").fadeIn(3000);
+     });
+</script>

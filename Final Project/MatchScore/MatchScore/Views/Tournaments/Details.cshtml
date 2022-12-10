@@ -1,0 +1,266 @@
+﻿@using MatchScore.Exceptions
+@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@model TournamentDto
+@inject IPlayersService playerService
+@inject IAuthManager authManager
+@inject ITournamentsService tournamentService
+@inject IPhotoService photoService
+
+@{
+	List<PlayerDto> allPlayers = this.playerService.GetAll();
+
+	//List<PlayerDto> participants = new List<PlayerDto>();
+	//if (this.Model.PlayersFullName.Count != 0)
+	//{
+	//	foreach (var playerName in this.Model.PlayersFullName)
+	//	{
+	//		participants.Add(this.playerService.GetByFullName(playerName));
+	//	}
+	//}
+	var user = authManager.CurrentUser;
+	this.ViewData["Title"] = "Tournament-Details";
+}
+<body>
+	<section class="hero-section set-bg mb-4" data-setbg="/img/hero-2.jpg" style="background-image: url(&quot;/img/hero-2.jpg&quot;);">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-12">
+					<div class="hs-item">
+						<div class="container">
+							<div class="row">
+								<div class="col-lg-12">
+									<div class="hs-text">
+										<h4>@this.Model.StartDate.ToString("D") - @this.Model.EndDate.ToString("D")</h4>
+										<h2>@this.Model.Title</h2>
+										<h2>@this.Model.Format</h2>
+										<a href="#players" class="primary-btn">Check Players</a>
+										<a href="#NewPlayer" class="primary-btn">Add Participants</a>
+									</div>
+									@if (this.Model.Status != MatchScore.Models.Enums.Status.Future)
+									{
+										<div class="row mt-4">
+											<div class="col-lg-12">
+												<div class="hs-text">
+
+													<a asp-controller="Tournaments" asp-action="Round" asp-route-id="@this.Model.Id" class="primary-btn">Show Rounds</a>
+												</div>
+											</div>
+										</div>
+									}
+									@if (this.Model.Status == MatchScore.Models.Enums.Status.Past && this.Model.Format == MatchScore.Models.Enums.TournamentFormat.League)
+									{
+										<div class="row mt-4">
+											<div class="col-lg-12">
+												<div class="hs-text">
+													<a asp-controller="Tournaments" asp-action="FinishLeague" asp-route-id="@this.Model.Id" method="get" class="primary-btn">Final Standings</a>
+												</div>
+											</div>
+										</div>
+									}
+									@if (this.Model.Status == MatchScore.Models.Enums.Status.Past && this.Model.Format == MatchScore.Models.Enums.TournamentFormat.Knockout)
+									{
+										<div class="row mt-4">
+											<div class="col-lg-12">
+												<div class="hs-text">
+													<a asp-controller="Tournaments" asp-action="NextRound" asp-route-id="@this.Model.Id" method="get" class="primary-btn">Winner</a>
+												</div>
+											</div>
+										</div>
+									}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<div class="container">
+
+		<table class="table align-middle mb-0 text-white" id="players">
+			<thead>
+				<tr>
+					<th>Full Name</th>
+					<th>Country</th>
+					<th>Sports Club</th>
+					<th>Email</th>
+					<th>Status</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var player in allPlayers)
+				{
+					<tr>
+						<td>
+							<div class="d-flex align-items-center">
+								<img src="@photoService.GetPhotoUrl(player.Id)"
+								 alt=""
+								 style="width: 45px; height: 45px"
+								 class="rounded-circle" />
+								<div class="ms-3">
+									<a asp-controller="Players" asp-action="Details" asp-route-id="@player.Id" class="fw-bold"><p>&nbsp; @player.FullName</p></a>
+
+									@*<p class="fw-bold mb-1">&nbsp; @player.FullName</p>*@
+								</div>
+							</div>
+						</td>
+						<td>
+							<p class="fw-normal mb-1">@player.Country</p>
+						</td>
+						<td>
+							<p class="fw-normal mb-1">@player.SportClub</p>
+						</td>
+						<td>
+							<p class="fw-normal mb-1">@player.UserEmail</p>
+						</td>
+						<td>
+							@if (this.Model.PlayersFullName.Contains(player.FullName))
+							{
+								<span class="badge badge-success rounded-pill d-inline">Enlisted</span>
+							}
+							else
+							{
+								<span class="badge badge-warning rounded-pill d-inline">Awaiting</span>
+							}
+						</td>
+
+						<td>
+							@{
+								var dict = new Dictionary<string, string> { { "playerId", player.Id.ToString() }, { "tournamentId", this.Model.Id.ToString() } };
+							}
+							@if (this.Model.Status != MatchScore.Models.Enums.Status.Future)
+							{
+
+								@if (this.Model.PlayersFullName.Contains(player.FullName))
+								{
+
+
+									<a asp-controller="Tournaments" asp-action="RemovePlayer" asp-all-route-data="@dict" class="btn btn-link btn-sm btn-rounded disabled">Remove</a>
+
+								}
+								else
+								{
+
+									<a asp-controller="Tournaments" asp-action="AddPlayer" asp-all-route-data="@dict" class="btn btn-link btn-sm btn-rounded disabled">Add</a>
+								}
+							}
+							else
+							{
+								@if (this.Model.PlayersFullName.Contains(player.FullName))
+								{
+
+									if (user != null && this.tournamentService.IsDirectorOrAdminView(user, this.Model.Id))
+									{
+										<a asp-controller="Tournaments" asp-action="RemovePlayer" asp-all-route-data="@dict" class="btn btn-link btn-sm btn-rounded">Remove</a>
+
+									}
+									else
+									{
+										<a asp-controller="Tournaments" asp-action="RemovePlayer" asp-all-route-data="@dict" class="btn btn-link btn-sm btn-rounded disabled">Remove</a>
+
+									}
+
+
+
+
+								}
+								else
+								{
+									if (user != null && this.tournamentService.IsDirectorOrAdminView(user, this.Model.Id))
+									{
+										<a asp-controller="Tournaments" asp-action="AddPlayer" asp-all-route-data="@dict" class="btn btn-link btn-sm btn-rounded">Add</a>
+
+									}
+									else
+									{
+										<a asp-controller="Tournaments" asp-action="AddPlayer" asp-all-route-data="@dict" class="btn btn-link btn-sm btn-rounded disabled">Add</a>
+
+									}
+								}
+							}
+
+
+
+
+						</td>
+					</tr>
+				}
+
+			</tbody>
+		</table>
+	</div>
+
+	<section class="contact-section spad pb-4 pt-4">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6 m-auto">
+					<div class="contact-form text-center">
+						<h2 class="text-white">Add New Player</h2>
+						@{
+							var dictNames = new Dictionary<string, string>
+						{
+						{ "firstName", "" },
+						{ "lastName", "" },
+						{ "email", "" }
+						};
+						}
+						<form asp-controller="Tournaments" asp-action="AddUnregisteredPlayer" asp-all-route-data="@dictNames" asp-route-id="@this.Model.Id" method="get" id="NewPlayer">
+							<div class="group-in">
+								<label class="text-white" for="firstName">First Name</label>
+								<input asp-for="@dictNames["firstName"]" type="text" id="firstName">
+							</div>
+							<div class="group-in">
+								<label class="text-white" for="secondName">Last Name</label>
+								<input asp-for="@dictNames["lastName"]" type="text" id="secondName">
+							</div>
+							@*<div class="group-in">
+							<label for="email">Email</label>
+							<input asp-for="@dictNames["email"]" type="text" id="email">
+							</div>*@
+
+							@if (this.Model.Status != MatchScore.Models.Enums.Status.Future)
+							{
+								<a @*style="background-color:#59dd15"*@ class="btn disabled pl-3 pr-3 text-white" aria-disabled="true" type="submit">Add New Player</a>
+							}
+							else
+							{
+								if (user != null && this.tournamentService.IsDirectorOrAdminView(user, this.Model.Id))
+								{
+									<button @*style="background-color:#59dd15"*@ class="btn pl-3 pr-3" type="submit">Add New Player</button>
+
+								}
+								else
+								{
+									<a @*style="background-color:#59dd15"*@ class="btn disabled pl-3 pr-3" aria-disabled="true" type="submit">Add New Player</a>
+								}
+							}
+							<br />
+							<br />
+						</form>
+						@if (this.Model.Status != MatchScore.Models.Enums.Status.Future)
+						{
+							<a asp-controller="Tournaments" asp-action="StartTournament" asp-route-id="@this.Model.Id" class="btn btn-success disabled btn-lg pt-3 pb-3 pl-4 pr-4" aria-disabled="true" type="submit">Start tournament</a>
+						}
+						else
+						{
+							if (user != null && this.tournamentService.IsDirectorOrAdminView(user, this.Model.Id))
+							{
+								<a asp-controller="Tournaments" asp-action="StartTournament" asp-route-id="@this.Model.Id" class="btn btn-success btn-lg pt-3 pb-3 pl-4 pr-4" type="submit">Start tournament</a>
+
+							}
+							else
+							{
+								<a asp-controller="Tournaments" asp-action="StartTournament" asp-route-id="@this.Model.Id" class="btn btn-success disabled btn-lg pt-3 pb-3 pl-4 pr-4" aria-disabled="true" type="submit">Start tournament</a>
+
+							}
+						}
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+</body>

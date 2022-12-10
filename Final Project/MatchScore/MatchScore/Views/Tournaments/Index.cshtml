@@ -1,0 +1,171 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+	ViewData["Title"] = "Tournaments";
+	string prevButtonState = !this.Model.HasPrevPage ? "disabled" : "";
+	string nextButtonState = !this.Model.HasNextPage ? "disabled" : "";
+}
+@model PaginatedList<TournamentDto>;
+@inject IAuthManager authManager;
+@inject ITournamentsService tournamentService;
+<body>
+	<div class="container">
+
+		<nav class="navbar navbar-light bg-dark">
+			<form asp-controller="Tournaments" asp-action="Index" class="form-inline" method="get">
+
+				<p class="p-2">
+					<label for="select" class="text-white">Select filter</label>
+					<select id="select" name="filter">
+						<option value="">Choose...</option>
+						<optgroup label="Filter By">
+							<option value="Title">Title</option>
+							<option value="Email">Email</option>
+							<option value="Player">Player</option>
+						</optgroup>
+					</select>
+				</p>
+
+				<input class="form-control mr-sm-2 p-2" name="search" type="search" placeholder="Search" aria-label="Search">
+				<button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Search</button>
+				<span class="navbar-text p-2 text-white">
+					Search by Title or Email!
+				</span>
+
+				<p class="p-2">
+					<label for="select" class="text-white">Select Sorting</label>
+					<select id="select" name="sort">
+						<option value="">Choose...</option>
+						<optgroup label="Filter By">
+							<option value="Honorary">Prize-Honorary</option>
+							<option value="Financial">Prize-Financial</option>
+							<option value="League">Format-League</option>
+							<option value="Knockout">Format-Knockout</option>
+						</optgroup>
+					</select>
+				</p>
+
+				<button class="btn btn-outline-warning my-2 my-sm-0" type="submit">Sort</button>
+			</form>
+			<br />
+			<hr />
+		</nav>
+	</div>
+
+
+
+	<div class="container">
+		<main role="main" class="pb-3">
+			<table class="table table-striped text-white">
+				<thead>
+					<tr>
+						<th class="text-white" scope="col">Id</th>
+						<th scope="col">Title</th>
+						<th scope="col">Format</th>
+						<th scope="col">Prize</th>
+						<th scope="col">Director's email</th>
+						<th scope="col">StartDate</th>
+						<th scope="col">EndDate</th>
+						<th scope="col">Status</th>
+						<th scope="col">Details</th>
+						@if (this.authManager.CurrentUser != null && (this.authManager.CurrentUser.Role.Name == "Admin" ||this.authManager.CurrentUser.Role.Name == "Director"))
+						{
+							<th scope="col">Update</th>
+						}
+						@if (this.authManager.CurrentUser != null && this.authManager.CurrentUser.Role.Name == "Admin")
+						{
+							<th scope="col">Delete</th>
+						}
+						
+					</tr>
+				</thead>
+				<tbody>
+					@foreach (var tournament in this.Model)
+					{
+						var mid = "myModal" + tournament.Id;
+						var tm = "#myModal" + tournament.Id;
+
+						if (!tournament.IsDeleted)
+						{
+
+
+							<tr>
+								<th scope="row">@tournament.Id</th>
+								<td>@tournament.Title</td>
+								<td>@tournament.Format.ToString()</td>
+								<td>@tournament.Prize.ToString()</td>
+								<td>@tournament.DirectorEmail</td>
+								<td>@tournament.StartDate.ToString("D")</td>
+								<td>@tournament.EndDate.ToString("D")</td>
+								@if (tournament.Status == MatchScore.Models.Enums.Status.Current)
+								{
+									<td class="badge badge-warning rounded-pill">@tournament.Status</td>
+								}
+								else if (tournament.Status == MatchScore.Models.Enums.Status.Past)
+								{
+									<td class="badge badge-danger rounded-pill">Finished</td>
+								}
+								else
+								{
+									<td class="badge badge-success rounded-pill">@tournament.Status</td>
+								}
+
+								<td>
+									<a asp-controller="Tournaments" asp-action="Details" asp-route-id="@tournament.Id" class="btn btn-outline-warning text-warning">Details</a>
+								</td>
+								
+								<td>
+									@if (this.authManager.CurrentUser != null && (this.authManager.CurrentUser.Role.Name == "Admin" || this.tournamentService.IsDirectorOfCurrentTournament(this.authManager.CurrentUser,tournament.Id)==true) && tournament.Status == Status.Future)
+									{
+										<a asp-controller="Tournaments" asp-action="Update" asp-route-id="@tournament.Id" class="btn btn-outline-warning text-warning">Update</a>
+									}
+								</td>
+								<td>
+									@if (this.authManager.CurrentUser != null && this.authManager.CurrentUser.Role.Name == "Admin" )
+									{
+										<button type="button" class="button btn-danger" data-toggle="modal" data-target="@tm">Delete</button>
+									}
+								</td>
+							</tr>
+							<div class="modal fade" id="@mid" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+								<div class="modal-dialog">
+									<div class="modal-content">
+										<!-- Modal Header -->
+										<div class="modal-header">
+											<h4 class="modal-title" id="myModalLabel">Delete Confirmation</h4>
+											<button type="button" class="close" data-dismiss="modal">&times;</button>
+										</div>
+										<!-- Modal body -->
+										<div class="modal-body text-center mb-5">
+											<img src="/img/warning-sign.png" style="width: 150px;" class="img-responsive">
+											<h1>Are You Sure?</h1>
+											<p>Do you really want to delete Tournament: <b style="font-size: 17px">@tournament.Title</b>? This process cannot be undone.</p>
+											<div class="btn-group">
+												<button type="button" class="btn btn-secondary btn-lg mr-2 rounded-lg" data-dismiss="modal">Cancel</button>
+												<form asp-controller="Tournaments" asp-action="Delete" asp-route-id="@tournament.Id" method="get">
+													<input type="submit" value="Delete" class="btn btn-lg btn-danger" />
+												</form>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+
+						}
+					}
+
+				</tbody>
+
+
+
+			</table>
+
+
+
+		</main>
+		<a asp-controller="Tournaments" asp-action="Index" asp-route-PageNumber="@(this.Model.PageNumber - 1)" class="btn btn-outline-warning @prevButtonState m-2">Prev. Page</a>
+		<a class="text-white">Page @this.Model.PageNumber of @this.Model.TotalPages</a>
+		<a asp-controller="Tournaments" asp-action="Index" asp-route-PageNumber="@(this.Model.PageNumber + 1)" class="btn btn-outline-warning @nextButtonState m-2">Next Page</a>
+	</div>
+</body>

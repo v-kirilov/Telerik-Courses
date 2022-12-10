@@ -1,0 +1,14 @@
+﻿@model PaginatedList<MatchDto>
+@inject IMatchesService matchService
+
+@{
+    this.ViewData["Title"] = "Current Matches";
+
+    var currentMatches = this.Model.Where(m => m.Date == DateTime.Today).ToList();
+    
+    PaginatedList<MatchDto> matches = new PaginatedList<MatchDto>(currentMatches, 10, 1);
+}
+
+
+
+ <partial name="_MatchForm" />

@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "Login";
+}
+
+@model LoginViewModel
+<!-- Section: Design Block -->
+<link rel="stylesheet" href="~/css/account.css" />
+<!-- Section: Design Block -->
+<section class="text-center text-lg-start">
+    <!-- Jumbotron -->
+    <div class="container py-4">
+        <div class="row g-0 align-items-center">
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <div class="card cascading-right" style="
+            background: hsla(0, 0%, 100%, 0.55);
+            backdrop-filter: blur(30px);
+            ">
+                    <div class="card-body p-5 shadow-5 text-center">
+                        <h2 class="fw-bold mb-5">Sign In</h2>
+                        <form asp-controller="Users" asp-action="Login" method="post" id="singninFrom">
+                            <!-- Email input -->
+                            <div class="form-outline mb-4">
+                                <label class="font-weight-bold" asp-for="Email">Email</label>
+                                <input type="email" asp-for="Email" class="form-control" required placeholder="Enter valid email" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+
+                            <!-- Password input -->
+                            <div class="form-outline mb-4">
+                                <label class="font-weight-bold" asp-for="Password">Password</label>
+                                <input type="password" asp-for="Password" class="form-control" placeholder="***********" required>
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+
+                            <!-- Submit button -->
+                            <div class="d-grid gap-2">
+                                <button type="submit" name="submit" value="Login" class="btn btn-danger btn-block mb-4">
+                                    Sign in
+                                </button>
+                            </div>
+
+                            <p>Don't have an account? <a asp-controller="Users" asp-action="Register">Sign Up</a></p>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 mb-5 mb-lg-0">
+                <img style="width: 75%" src="https://images.unsplash.com/photo-1570498839593-e565b39455fc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=435&q=80" class="rounded-4 shadow-4"
+                     alt="" />
+            </div>
+        </div>
+    </div>
+    <!-- Jumbotron -->
+</section>
+<!-- Section: Design Block -->
